@@ -178,7 +178,7 @@ public class CountSite {
      * @param infileDirS
      * @param outfileDirS
      */
-    public void calVcfAverageDepth(String infileDirS, String outfileDirS) {
+    public static void calVcfAverageDepth(String infileDirS, String outfileDirS) {
         File[] fs = new File(infileDirS).listFiles();
         for (int i = 0; i < fs.length; i++) {
             if (fs[i].isHidden()) {
