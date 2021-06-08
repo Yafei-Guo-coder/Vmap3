@@ -13,10 +13,15 @@ import java.io.File;
 import java.io.IOException;
 
 import static FunctionV.CountSite.countSitesinFastCallformat_fromTxt;
+import static FunctionV.CountSite.splitVcf;
 //import static FunctionV.CountSite.countrepeatIndelinFastCallformat;
 
 public class Start {
     public static void main(String[] args) throws IOException {
-        countSitesinFastCallformat_fromTxt(args[0]);
+        splitVcf(args[0]);
+       // splitVcf("/Users/guoyafei/Desktop/Test");
+//        countSitesinFastCallformat_fromTxt(args[0],args[1]);
+       // System.out.println(Runtime.getRuntime().availableProcessors());
+//        countSitesinFastCallformat_fromTxt("/Users/guoyafei/Documents/01_个人项目/05_FuGWAS/06_单倍型分析0419/test","/Users/guoyafei/Documents/01_个人项目/05_FuGWAS/06_单倍型分析0419/01_VCF/1.txt");
     }
 }
