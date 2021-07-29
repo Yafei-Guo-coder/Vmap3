@@ -129,15 +129,15 @@ public class CountSite {
             String infileS = f.getAbsolutePath();
             BufferedReader br = AoFile.readFile(infileS);
 
-            String outfileID = infileS+".indel.gz";
-            String outfileSNP = infileS+".snp.gz";
-            bwID = IOUtils.getTextGzipWriter(outfileID);
+            //String outfileID = infileS+".N.gz";
+            String outfileSNP = infileS+".noN.snp.gz";
+            //bwID = IOUtils.getTextGzipWriter(outfileID);
             bwSNP = IOUtils.getTextGzipWriter(outfileSNP);
             while (true) {
                 try {
                     if (!((temp = br.readLine()) != null)) break;
                     if (temp.startsWith("#")) {
-                        bwID.write(temp+"\n");
+                        //bwID.write(temp+"\n");
                         bwSNP.write(temp+"\n");
                         continue;
                     }
@@ -145,19 +145,19 @@ public class CountSite {
                     e.printStackTrace();
                 }
                 String alt = PStringUtils.fastSplit(temp).get(4);
-                if (alt.contains("D") || (alt.contains("I"))) {
-                    try {
-                        bwID.write(temp+"\n");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
+                if (alt.equals("A") || (alt.equals("T"))||alt.equals("C") || (alt.equals("G"))) {
                     try {
                         bwSNP.write(temp+"\n");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
+                } //else {
+//                    try {
+//                        bwID.write(temp+"\n");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
             try {
                 br.close();
@@ -165,7 +165,7 @@ public class CountSite {
                 e.printStackTrace();
             }
             try {
-                bwID.close();
+                //bwID.close();
                 bwSNP.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -239,6 +239,8 @@ public class CountSite {
                     double sd = d.getStandardDeviation();
                     StringBuilder sb = new StringBuilder();
                     sb.append(String.format("%.4f", relativeMean));
+                    sb.append("\t");
+                    sb.append(String.format("%.4f", sd));
                     bw.write(sb.toString());
                     bw.newLine();
                 }
