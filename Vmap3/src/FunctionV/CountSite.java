@@ -124,13 +124,13 @@ public class CountSite {
         List<File> fsList = AoFile.getFileListInDir(infileDirS);
         for (File f : fsList){
             String temp = null;
-            BufferedWriter bwID = null;
+//            BufferedWriter bwID = null;
             BufferedWriter bwSNP = null;
             String infileS = f.getAbsolutePath();
             BufferedReader br = AoFile.readFile(infileS);
 
             //String outfileID = infileS+".N.gz";
-            String outfileSNP = infileS+".noN.snp.gz";
+            String outfileSNP = infileS+".biallel.noN.snp.gz";
             //bwID = IOUtils.getTextGzipWriter(outfileID);
             bwSNP = IOUtils.getTextGzipWriter(outfileSNP);
             while (true) {
