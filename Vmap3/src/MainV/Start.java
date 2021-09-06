@@ -4,15 +4,54 @@ package MainV;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import pgl.app.fastCall2.IndividualGenotype;
 import pgl.infra.utils.IOUtils;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
 public class Start {
-    public static void main(String[] args) throws IOException {
+    public static void main(String args[]) throws IOException {
+        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/1_1_5000001.ing.gz";
+        String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2/chr01/ABD_0001/1_1_5000001.ing.gz";
+        DataInputStream dis1 = IOUtils.getBinaryGzipReader(inputDirS);
+        IntArrayList codedAlleleInfo = null;
+        IntArrayList codedAlleleInfo2 = null;
+        String taxonName = dis1.readUTF();
+        short chrom = dis1.readShort();
+        int binStart = dis1.readInt();
+        int binEnd = dis1.readInt();
+
+        codedAlleleInfo = new IntArrayList();
+        int currentRecord = 0;
+        while ((currentRecord = dis1.readInt()) != Integer.MIN_VALUE) {
+            codedAlleleInfo.add(currentRecord);
+        }
+        System.out.println(codedAlleleInfo.size());
+        DataInputStream dis2 = IOUtils.getBinaryGzipReader(outputDirS);
+        String taxonName2 = dis2.readUTF();
+        short chrom2 = dis2.readShort();
+        int binStart2 = dis2.readInt();
+        int binEnd2 = dis2.readInt();
+
+        codedAlleleInfo2 = new IntArrayList();
+        int currentRecord2 = 0;
+        while ((currentRecord2 = dis2.readInt()) != Integer.MIN_VALUE) {
+            System.out.println(codedAlleleInfo2.size());
+            codedAlleleInfo2.add(currentRecord2);
+        }
+//        System.out.println(codedAlleleInfo2.size());
+//        System.out.println(codedAlleleInfo.size());
+
+//        BufferedWriter bw = IOUtils.getTextWriter(this.vLibPosFileS);
+//        for (int i = 0; i < ; i++) {
+//            sb.setLength(0);
+//            sb.append(this.chrom).append("\t").append(vl.getPosition(i));
+//            bw.write(sb.toString());
+//            bw.newLine();
+//        }
+    }
+
+    public static void test() throws IOException {
         String[] taxaNames = null;
         String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing";
         String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2";
@@ -92,6 +131,7 @@ public class Start {
                     for (int m = 0; m < codedAlleleInfo.size(); m++) {
                         dos.writeInt(codedAlleleInfo.getInt(m));
                     }
+                    dos.writeInt(Integer.MIN_VALUE);
                     dos.flush();
                     dos.close();
                 }
