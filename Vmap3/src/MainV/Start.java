@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Start {
-    public static void main(String args[]) throws IOException {
+    public static void test() throws IOException {
         String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/1_1_5000001.ing.gz";
         String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2/chr01/ABD_0001/1_1_5000001.ing.gz";
         DataInputStream dis1 = IOUtils.getBinaryGzipReader(inputDirS);
@@ -50,14 +50,12 @@ public class Start {
 //            bw.newLine();
 //        }
     }
-
-    public static void test() throws IOException {
+    public static void main(String args[]) throws IOException {
         String[] taxaNames = null;
-        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing";
-        String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2";
+        String inputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing";
+        String outputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing2";
         File outDir = new File (outputDirS);
 //        outDir.mkdir();
-
         List<File> chrDirList = IOUtils.getDirListInDir(inputDirS);
         File[] chrOutDirs = new File[chrDirList.size()];
         for (int i = 0; i < chrDirList.size(); i++) {
@@ -134,7 +132,9 @@ public class Start {
                     dos.writeInt(Integer.MIN_VALUE);
                     dos.flush();
                     dos.close();
+                    dis.close();
                 }
+
             }
 //        splitVcf(args[0]);
             //splitVcf("/data2/yafei/004_Vmap3/VCF/Raw_VCF/AA_vcf/chr019");
