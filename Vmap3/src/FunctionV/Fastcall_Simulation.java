@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Fastcall_Simulation {
     int haploNum = 3;
-    int indiNum = 100;
+    int indiNum = 4;
     String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu.fa.gz";
     double dpi = 0.1;
     int coverage = 10;
@@ -30,21 +30,21 @@ public class Fastcall_Simulation {
     }
 
     public Fastcall_Simulation(String[] args) throws IOException {
-       this.haploFa(refGenome, haploNum);
-//       this.simuIndi(haploSeqs, indiNum);
-//       this.simuReads(indiFa, 10);
+        ArrayList<StringBuilder> hs = this.haploFa(refGenome, haploNum);
+       this.simuIndi(hs, indiNum);
+       this.simuReads(indiFa, 10);
     }
 
     public StringBuilder writeTrueSet(int num1, int num2) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader("haploSet.txt"));
-        ArrayList<String[]> haplo = null;
+        BufferedReader br = new BufferedReader(new FileReader("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt"));
+        ArrayList<String[]> haplo = new ArrayList<>();
         String[] h = null;
         String str;
         while ((str = br.readLine()) != null){
             h = str.split("\t");
             haplo.add(h);
         }
-        StringBuilder indiMut = null;
+        StringBuilder indiMut = new StringBuilder();
 
         for (int j = 0; j < haplo.size(); j++) {
             indiMut.append(haplo.get(j)[3].charAt(num1));
@@ -55,20 +55,20 @@ public class Fastcall_Simulation {
         return indiMut;
     }
     public StringBuilder writePosRefAlt() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader("haploSet.txt"));
-        ArrayList<String[]> haplo = null;
+        BufferedReader br = new BufferedReader(new FileReader("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt"));
+        ArrayList<String[]> haplo = new ArrayList<>();
         String[] h = null;
         String str;
         while ((str = br.readLine()) != null){
             h = str.split("\t");
             haplo.add(h);
         }
-        StringBuilder indiPos = null;
+        StringBuilder indiPos = new StringBuilder();
 
         for (int m = 0; m < 3; m++) {
             for (int j = 0; j < haplo.size(); j++) {
                 indiPos.append(haplo.get(j)[m]+"\t");
-                indiPos.append(haplo.get(j)[m]);
+//                indiPos.append(haplo.get(j)[m]);
             }
             indiPos.append("\n");
         }
@@ -149,23 +149,24 @@ public class Fastcall_Simulation {
     }
 
     public ArrayList<ArrayList<String>> simuIndi(ArrayList<StringBuilder> haploFas, int indiNum) throws IOException {
-        BufferedWriter truebr = new BufferedWriter(new FileWriter("haploSet.txt"));
+        BufferedWriter truebr = new BufferedWriter(new FileWriter("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/TrueSet1.txt"));
         ArrayList<StringBuilder> fas = haploFas;
-        ArrayList<String> trueS = null;
+//        ArrayList<String> trueS = new ArrayList<>();
         int Num = indiNum;
-        ArrayList<ArrayList<String>> indiFa = null;
-
+        ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
+        truebr.write(String.valueOf(writePosRefAlt()));
         for (int i = 0; i < Num; i++) {
-            ArrayList<String> paired = null;
+            ArrayList<String> paired = new ArrayList<>();
             int p1 = (int) Math.random();
             int p2 = (int) Math.random();
             paired.add(0, String.valueOf(fas.get(p1)));
             paired.add(1, String.valueOf(fas.get(p2)));
             indiFa.add(i, paired);
-            trueS.add(String.valueOf(writeTrueSet(p1,p2)));
+            truebr.write(String.valueOf(writeTrueSet(p1,p2)));
+            truebr.write("\n");
         }
-        truebr.write(String.valueOf(writePosRefAlt()));
-        truebr.write(String.valueOf(trueS));
+//        truebr.write(String.valueOf(trueS));
+
         truebr.flush();
         truebr.close();
         return indiFa;
