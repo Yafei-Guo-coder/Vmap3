@@ -7,18 +7,18 @@ import java.io.*;
 import java.util.*;
 
 public class Fastcall_Simulation {
-    int haploNum = 100;
+    int haploNum = 3;
     int indiNum = 100;
-    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr_1.fa.gz";
-    double dpi = 0.001;
+    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu.fa.gz";
+    double dpi = 0.1;
     int coverage = 10;
     //30000000*10/300 reads number
     int insertL = 350;
     int readL = 150;
     String haploFile = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt";
 
-    ArrayList<StringBuilder> haploSeqs = null;
-    ArrayList<ArrayList<String>> indiFa = null;
+    ArrayList<StringBuilder> haploSeqs = new ArrayList<>();
+    ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
         double mafD = 0.7;
@@ -97,8 +97,9 @@ public class Fastcall_Simulation {
         ArrayList<StringBuilder> haploFa = new ArrayList<>();
         for (int m = 0; m < this.haploNum; m++) {
             haploFa.add(m,faSeq);
-            StringBuilder mutPos = new StringBuilder();
+
             for (int i = 0; i < faSeq.length(); i++) {
+                StringBuilder mutPos = new StringBuilder();
                 char ref = faSeq.charAt(i);
                 double p = getRandom(0,1);
                 if (p <= dpi) {
@@ -137,9 +138,9 @@ public class Fastcall_Simulation {
                             mutPos.append(ref);
                         }
                     }
+                    haploSet.write(mutPos.toString());
+                    haploSet.newLine();
                 }
-                haploSet.write(mutPos.toString());
-                haploSet.newLine();
             }
         }
         haploSet.flush();
@@ -324,21 +325,36 @@ public class Fastcall_Simulation {
 
     public static char randomAllele(char alle){
         char alt = 0;
-        char a = alle;
+        Character a = alle;
         double p = getRandom(0,1);
-        char[] ATCG = new char[]{'A', 'T', 'C', 'G'};
-        int in = Arrays.binarySearch(ATCG,a);
-        for (int i = 0; i < 4; i++) {
-            if(i!=in){
-                if(p <= 1/3){
-                    alt = 'A';
-                }else if(1/3 < p && p <= 2/3){
-                    alt = 'T';
-                }else{
-                    alt = 'C';
-                }
+
+        HashMap map = new HashMap<Integer, Character>();
+        map.put(0, 'A');
+        map.put(1, 'T');
+        map.put(2, 'C');
+        map.put(3, 'G');
+
+        int in = 0;
+        for (int j = 0; j < 4; j++) {
+            if(a.equals(map.get(j))){
+                in = j;
             }
         }
+        StringBuilder sb = new StringBuilder();
+        for (int m = 0; m < 4; m++) {
+            if(m==in)continue;
+            sb.append(map.get(m));
+        }
+
+        if(p <= 0.33){
+            alt = sb.charAt(0);
+
+        }else if(0.33 < p && p <= 0.66){
+            alt = sb.charAt(1);
+        }else{
+            alt = sb.charAt(2);
+        }
+
         return alt;
     }
     public HashMap FindPos(){
