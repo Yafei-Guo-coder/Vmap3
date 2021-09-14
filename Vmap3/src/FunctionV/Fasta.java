@@ -1,6 +1,9 @@
 package FunctionV;
 
+import pgl.infra.utils.IOUtils;
+
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,7 +105,8 @@ public class Fasta {
 
     public void setBlocks(String filename) throws IOException {
         this.block = new ArrayList<>();
-        BufferedReader br = new BufferedReader(new FileReader(filename));
+        BufferedReader br = IOUtils.getTextGzipReader(filename);
+//        BufferedReader br = new BufferedReader(new getTextGzipReader(filename));
         String str;
         str = br.readLine();
         while (str != null){

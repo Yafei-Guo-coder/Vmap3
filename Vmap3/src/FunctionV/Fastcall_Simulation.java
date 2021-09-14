@@ -1,8 +1,7 @@
 package FunctionV;
 
-
-import utils.IOUtils;
 import org.apache.commons.math3.distribution.GeometricDistribution;
+import pgl.infra.utils.IOUtils;
 
 import java.io.*;
 import java.util.*;
@@ -10,13 +9,13 @@ import java.util.*;
 public class Fastcall_Simulation {
     int haploNum = 100;
     int indiNum = 100;
-    String refGenome = "fa";
+    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr_1.fa.gz";
     double dpi = 0.001;
     int coverage = 10;
     //30000000*10/300 reads number
     int insertL = 350;
     int readL = 150;
-    String haploFile = "";
+    String haploFile = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt";
 
     ArrayList<StringBuilder> haploSeqs = null;
     ArrayList<ArrayList<String>> indiFa = null;
@@ -90,13 +89,15 @@ public class Fastcall_Simulation {
         Fasta fa = new Fasta();
         fa.setBlocks(this.refGenome);
         ArrayList<ArrayList<String>> faMap = fa.getBlock();
-        StringBuilder faSeq = null;
+        StringBuilder faSeq = new StringBuilder();
+//        System.out.println(faMap.get(0).get(0));
+//        System.out.println(faMap.get(0).get(1));
         faSeq.append(faMap.get(0).get(1));
 
-        ArrayList<StringBuilder> haploFa = null;
+        ArrayList<StringBuilder> haploFa = new ArrayList<>();
         for (int m = 0; m < this.haploNum; m++) {
             haploFa.add(m,faSeq);
-            StringBuilder mutPos = null;
+            StringBuilder mutPos = new StringBuilder();
             for (int i = 0; i < faSeq.length(); i++) {
                 char ref = faSeq.charAt(i);
                 double p = getRandom(0,1);

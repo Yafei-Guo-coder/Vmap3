@@ -1,6 +1,6 @@
 package FunctionV;
 
-import pgl.app.fastCall2.BuildVariationLibrary;
+
 //import pgl.app.fastCall2.IndividualGenotype;
 import pgl.infra.utils.IOUtils;
 import pgl.infra.utils.PStringUtils;
@@ -14,15 +14,15 @@ import java.util.concurrent.Future;
 public class Vmap3DataSet {
     public static void main(String[] args) {
 
-        String[] taxaNames = null;
-        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing";
-        String outDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2";
-        List<File> ingTaxaDirList = IOUtils.getDirListInDir(inputDirS);
-        taxaNames = new String[ingTaxaDirList.size()];
-        for (int i = 0; i < ingTaxaDirList.size(); i++) {
-            taxaNames[i] = ingTaxaDirList.get(i).getName();
-        }
-        Arrays.sort(taxaNames);
+//        String[] taxaNames = null;
+//        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing";
+//        String outDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2";
+//        List<File> ingTaxaDirList = IOUtils.getDirListInDir(inputDirS);
+//        taxaNames = new String[ingTaxaDirList.size()];
+//        for (int i = 0; i < ingTaxaDirList.size(); i++) {
+//            taxaNames[i] = ingTaxaDirList.get(i).getName();
+//        }
+//        Arrays.sort(taxaNames);
 //        for (int j = 0; j < taxaNames.length; j++) {
 //            String fileS = new File (ingTaxaDirList.get(j), sb.toString()).getAbsolutePath();
 //            BuildVariationLibrary.TaxonRead tr = new BuildVariationLibrary.TaxonRead(fileS);
