@@ -8,10 +8,10 @@ import java.util.*;
 
 public class Fastcall_Simulation {
     int haploNum = 3;
-    int indiNum = 4;
+    int indiNum = 2;
     String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu.fa.gz";
     double dpi = 0.1;
-    int coverage = 10;
+    int readsNumSingle = 4;
     //30000000*10/300 reads number
     int insertL = 350;
     int readL = 150;
@@ -31,8 +31,8 @@ public class Fastcall_Simulation {
 
     public Fastcall_Simulation(String[] args) throws IOException {
         ArrayList<StringBuilder> hs = this.haploFa(refGenome, haploNum);
-       this.simuIndi(hs, indiNum);
-       this.simuReads(indiFa, 10);
+        ArrayList<ArrayList<String>> indi = this.simuIndi(hs, indiNum);
+       this.simuReads(indi, 10);
     }
 
     public StringBuilder writeTrueSet(int num1, int num2) throws IOException {
@@ -171,47 +171,59 @@ public class Fastcall_Simulation {
         truebr.close();
         return indiFa;
     }
-
-
     public void simuReads(ArrayList<ArrayList<String>> indiFas, int i) throws IOException {
 
         this.indiFa = indiFas;
 
         //生成reads起始位点和对应序列
-        ArrayList<ArrayList<Integer>> startPos = null;
+        ArrayList<ArrayList<Integer>> startPos = new ArrayList<>();
         for (int j = 0; j < indiNum; j++) {
-            for (i = 0; i < coverage; i++) {
+            ArrayList<Integer> Pos = new ArrayList<>();
+            for (i = 0; i < readsNumSingle; i++) {
                 int p = (int) getRandom(0, indiFa.get(j).get(1).length() - 351);
-                startPos.get(j).add(p);
+                Pos.add(p);
             }
+            startPos.add(j,Pos);
         }
-        ArrayList<ArrayList<String>> random350 = null;
+        ArrayList<ArrayList<String>> random350 = new ArrayList<>();
         for (int m = 0; m < indiNum; m++) {
-            for (int j = 0; j < startPos.size(); j++) {
+            ArrayList<String> se = new ArrayList<>();
+            for (int j = 0; j < readsNumSingle; j++) {
                 int ran = (int) Math.random();
                 if(ran > 0.5){
-                    random350.get(m).add((String) indiFa.get(0).get(1).subSequence(startPos.get(m).get(j), startPos.get(m).get(j)+350));
+                    int a =  startPos.get(m).get(j);
+                    int b = startPos.get(m).get(j)+350;
+                    String s = (String) indiFa.get(m).get(1).subSequence(a, b);
+                    se.add(j,s);
                 }else{
-                    random350.get(m).add((String) indiFa.get(0).get(2).subSequence(startPos.get(m).get(j), startPos.get(m).get(j)+350));
+                    int a =  startPos.get(m).get(j);
+                    int b = startPos.get(m).get(j)+350;
+                    String s = (String) indiFa.get(m).get(1).subSequence(a, b);
+                    se.add(j,s);
                 }
             }
+            random350.add(m,se);
         }
-
-        String Reads1 = null;
-        String Reads2 = null;
-        ArrayList<Integer> read1Q = null;
-        ArrayList<Integer> read2Q = null;
-        String readQ = new File("reads.Q.txt").getAbsolutePath();
+        String Reads1 = new String();
+        String Reads2 = new String();
+        ArrayList<Integer> read1Q = new ArrayList<>();
+        ArrayList<Integer> read2Q = new ArrayList<>();
+        String readQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
         BufferedReader brQ = IOUtils.getTextReader(readQ);
         String str;
         String[] h = null;
+        int count = 0;
         while ((str = brQ.readLine()) != null){
             h = str.split("\t");
-            read1Q.add(Integer.valueOf(h[1]));
-            read2Q.add(Integer.valueOf(h[2]));
+//            double num1 = Double.parseDouble(h[1]);
+//            int num = (int) num1;
+//            read1Q.add(count, num);
+            read1Q.add(count, (int)Double.parseDouble(h[1]));
+            read2Q.add(count, (int)Double.parseDouble(h[2]));
+            count++;
         }
-        ArrayList<Double> read1p = null;
-        ArrayList<Double> read2p = null;
+        ArrayList<Double> read1p = new ArrayList<>();
+        ArrayList<Double> read2p = new ArrayList<>();
         for (int j = 0; j < read1Q.size(); j++) {
             double x1 = read1Q.get(j);
             double x2 = read2Q.get(j);;
@@ -224,14 +236,12 @@ public class Fastcall_Simulation {
 
         for (int j = 0; j < random350.size(); j++) {
             Random r = new Random();
-            String outfile1 = new File("sample"+j+"_R1.fq").getAbsolutePath();
-            String outfile2 = new File("sample"+j+"_R2.fq").getAbsolutePath();
+            String outfile1 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+j+"_R1.fq").getAbsolutePath();
+            String outfile2 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+j+"_R2.fq").getAbsolutePath();
             BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
             BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
             for (int k = 0; k < random350.get(j).size(); k++) {
                 Reads1 = random350.get(j).get(k).substring(0, 150);
-
-
                 StringBuilder sbreads1 = new StringBuilder();
                 for (int m = 0; m < Reads1.length(); m++) {
 
@@ -283,35 +293,33 @@ public class Fastcall_Simulation {
                 }
                 Reads2 = sb.toString();
 
-                bw1.write("@" + j + "\n");
+                bw1.write("@" + k + "\n");
                 bw1.write(Reads1 + "\n");
                 bw1.write("+\n");
                 HashMap map = FindPos();
-                int[] score = null;
-                for (int l = 0; l < map.size(); l++) {
-                    score[l]= (int) map.get(l);
-                }
+//                ArrayList<> score = new ArrayList<>();
+//                for (int l = 0; l < map.size(); l++) {
+//                    Object i1 =  map.get(l);
+//                    score.add(l,i1);
+//                }
 
                 StringBuffer sb1 = new StringBuffer();
                 for (int m = 0; m < 150; m++) {
-                    int in = Arrays.binarySearch(score,(int)read1Q.get(m));
-                    String Q = (String) map.get(in);
+//                    int in = Arrays.binarySearch(new ArrayList[]{score},read1Q.get(m));
+                    String Q = (String) map.get(read1Q.get(m));
 
-//                    int score = (m - 150) * (m - 150) * 14 / 22201 + 24;
-//                    String Q = getphred(score);
                     sb1.append(Q);
                 }
                 bw1.write(sb1.toString() + "\n");
 
-                bw2.write("@" + j + "\n");
+                bw2.write("@" + k + "\n");
                 bw2.write(Reads2 + "\n");
                 bw2.write("+\n");
                 StringBuffer sb2 = new StringBuffer();
                 for (int m = 0; m < 150; m++) {
-                    int in = Arrays.binarySearch(score,(int)read2Q.get(m));
-                    String Q = (String) map.get(in);
-//                    int score = -(m - 1) * (m - 1) * 8 / 22201 + 37;
-//                    String Q = getphred(score);
+//                    int in = Arrays.binarySearch(new ArrayList[]{score},read1Q.get(m));
+                    String Q = (String) map.get(read1Q.get(m));
+//
                     sb2.append(Q);
                 }
                 bw2.write(sb2.toString() + "\n");
