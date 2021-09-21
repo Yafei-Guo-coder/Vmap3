@@ -7,99 +7,48 @@ import java.io.*;
 import java.util.*;
 
 public class Fastcall_Simulation {
+    //faSeq是参考基因组的序列。
+    StringBuilder faSeq = new StringBuilder();
+    //第一步产生的突变位点单倍型fa序列。
+    ArrayList<String> haploFa = new ArrayList<>();
     int haploNum = 3;
     int indiNum = 2;
-    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu.fa.gz";
-    String OtherGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu.fa.gz";
-    double dpi = 0.1;
     int readsNumSingle = 4;
     //30000000*10/300 reads number
+//    int readsNum = (int) (readsNumSingle*0.01);
+    String OtherGenome = "";
+    String refGenome = "";
+    String trueSet = "";
+    Double dpi = 0.001;
+    ArrayList<Integer> Q = new ArrayList<>();
+//    ArrayList<Integer> read2Q = new ArrayList<>();
+    ArrayList<Double> readp = new ArrayList<>();
+//    ArrayList<Double> read2p = new ArrayList<>();
 
-    int readsNum = (int) (readsNumSingle*0.01);
     String haploFile = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt.gz";
-
     ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
-        double mafD = 0.7;
+//        double mafD = 0.7;
         new Fastcall_Simulation(args);
     }
 
     public Fastcall_Simulation(String[] args) throws IOException {
-        ArrayList<StringBuilder> hs = this.haploFa(refGenome, haploNum);
-        ArrayList<ArrayList<String>> indi = this.simuIndi(hs, indiNum);
-
-       this.simuReads(indi, 10);
-    }
-
-
-
-    public StringBuilder writeTrueSet(int num1, int num2) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt"));
-        ArrayList<String[]> haplo = new ArrayList<>();
-        String[] h = null;
-        String str;
-        while ((str = br.readLine()) != null){
-            h = str.split("\t");
-            haplo.add(h);
-        }
-        StringBuilder indiMut = new StringBuilder();
-
-        for (int j = 0; j < haplo.size(); j++) {
-            indiMut.append(haplo.get(j)[3].charAt(num1));
-            indiMut.append(haplo.get(j)[3].charAt(num2));
-            indiMut.append("\t");
-        }
-        br.close();
-        return indiMut;
-    }
-    public StringBuilder writePosRefAlt() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt"));
-        ArrayList<String[]> haplo = new ArrayList<>();
-        String[] h = null;
-        String str;
-        while ((str = br.readLine()) != null){
-            h = str.split("\t");
-            haplo.add(h);
-        }
-        StringBuilder indiPos = new StringBuilder();
-
-        for (int m = 0; m < 3; m++) {
-            for (int j = 0; j < haplo.size(); j++) {
-                indiPos.append(haplo.get(j)[m]+"\t");
-            }
-            indiPos.append("\n");
-        }
-        br.close();
-        return indiPos;
-    }
-
-
-    public static double getRandom(double min, double max) {
-        return Math.random() * (max - min) + min;
+        this.haploFa();
+        this.simuIndi();
     }
 
     private ArrayList<String> simuReadsOtherChr(String otherGenome, int readsNum) throws IOException {
-        this.OtherGenome = otherGenome;
-        this.readsNum = readsNum;
         Fasta fa = new Fasta();
         fa.setBlocks(this.OtherGenome);
         ArrayList<ArrayList<String>> faMap = fa.getBlock();
         StringBuilder faSeq = new StringBuilder();
         faSeq.append(faMap.get(0).get(1));
-
-        //生成reads起始位点和对应序列
-        ArrayList<ArrayList<Integer>> startPos = new ArrayList<>();
-
         ArrayList<Integer> Pos = new ArrayList<>();
-
         for (int i = 0; i < readsNum; i++) {
             int p = (int) getRandom(0, faSeq.length() - 351);
             Pos.add(p);
         }
-
-        ArrayList<ArrayList<String>> random350 = new ArrayList<>();
-
         ArrayList<String> se = new ArrayList<>();
         for (int j = 0; j < readsNum; j++) {
             int ran = (int) Math.random();
@@ -118,21 +67,17 @@ public class Fastcall_Simulation {
         return se;
     }
 
-    public ArrayList<StringBuilder> haploFa(String refFa, int haploNum) throws IOException {
-        this.haploNum = haploNum;
-        this.refGenome = refFa;
-        BufferedWriter haploSet = new BufferedWriter(new FileWriter(haploFile));
-
+    public void haploFa() throws IOException {
+        ArrayList<String> A = new ArrayList<>();
+        BufferedWriter haploSet = IOUtils.getTextGzipWriter(haploFile);
         Fasta fa = new Fasta();
         fa.setBlocks(this.refGenome);
         ArrayList<ArrayList<String>> faMap = fa.getBlock();
-        StringBuilder faSeq = new StringBuilder();
+
         faSeq.append(faMap.get(0).get(1));
-
-        ArrayList<StringBuilder> haploFa = new ArrayList<>();
+        //循环每一个单倍型。
         for (int m = 0; m < this.haploNum; m++) {
-            haploFa.add(m,faSeq);
-
+            int count = 0;
             for (int i = 0; i < faSeq.length(); i++) {
                 StringBuilder mutPos = new StringBuilder();
                 char ref = faSeq.charAt(i);
@@ -140,74 +85,263 @@ public class Fastcall_Simulation {
                 if (p <= dpi) {
                     char alt = randomAllele(faSeq.charAt(i));
                     mutPos.append(i+"\t"+ref+"\t"+alt+"\t");
-                    Double maf = null;
+//                    Double maf = null;
                     double mafD = 0.7;
                     GeometricDistribution distribution = new GeometricDistribution(mafD);
                     int D = distribution.sample(1)[0];
                     double maf1 = 0;
                     double p2 = 0;
                     if(D==0){
-                        maf1 = getRandom(0,0.1);
-                        p2 = getRandom(0,1);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0,0.1);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
+                        }
                     }else if(D==1){
-                        maf1 = getRandom(0.1,0.2);
-                        p2 = getRandom(0,1);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0.1,0.2);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
+                        }
                     }else if(D==2){
-                        maf1 = getRandom(0.2,0.3);
-                        p2 = getRandom(0,1);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0.2,0.3);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
+                        }
                     }else if(D==3){
-                        maf1 = getRandom(0.3,0.4);
-                        p2 = getRandom(0,1);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0.3,0.4);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
+                        }
                     }else if(D==4){
-                        maf1 = getRandom(0.4,0.5);
-                        p2 = getRandom(0,1);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0.4,0.5);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
+                        }
                     }else{
-                        maf1 = getRandom(0,0.1);
-                        p2 = getRandom(0,1);
-                    }
-                    for (int q = 0; q < haploNum; q++) {
-                        if (maf1 > p2) {
-                            haploFa.get(m).setCharAt(i, alt);
-                            mutPos.append(alt);
-                        }else{
-                            mutPos.append(ref);
+                        for (int q = 0; q < haploNum; q++) {
+                            maf1 = getRandom(0,0.1);
+                            p2 = getRandom(0,1);
+                            if (maf1 > p2) {
+                                mutPos.append(alt);
+                            }else{
+                                mutPos.append(ref);
+                            }
                         }
                     }
                     haploSet.write(mutPos.toString());
                     haploSet.newLine();
+                    A.add(count, String.valueOf(mutPos));
+                    StringBuilder sb = new StringBuilder();
+                    for (int j = 2; j < mutPos.toString().length(); j++) {
+                        sb.append(mutPos.toString().charAt(j));
+                    }
+                    haploFa.add(count, String.valueOf(sb));
+                    count++;
                 }
             }
+            StringBuilder sb = new StringBuilder();
+            for (int j = 0; j < A.size(); j++) {
+                sb.append(A.get(m).charAt(j));
+            }
+            haploFa.add(String.valueOf(sb));
         }
         haploSet.flush();
         haploSet.close();
-        return haploFa;
     }
 
-    public ArrayList<ArrayList<String>> simuIndi(ArrayList<StringBuilder> haploFas, int indiNum) throws IOException {
-        BufferedWriter truebr = new BufferedWriter(new FileWriter("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/TrueSet1.txt"));
-        ArrayList<StringBuilder> fas = haploFas;
-//        ArrayList<String> trueS = new ArrayList<>();
-        int Num = indiNum;
-        ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
+    public ArrayList<ArrayList<String>> simuIndi() throws IOException {
+        BufferedWriter truebr = IOUtils.getTextGzipWriter(trueSet);
         truebr.write(String.valueOf(writePosRefAlt()));
-        for (int i = 0; i < Num; i++) {
+        for (int i = 0; i < indiNum; i++) {
             ArrayList<String> paired = new ArrayList<>();
             int p1 = (int) Math.random();
             int p2 = (int) Math.random();
-            paired.add(0, String.valueOf(fas.get(p1)));
-            paired.add(1, String.valueOf(fas.get(p2)));
-            indiFa.add(i, paired);
             truebr.write(String.valueOf(writeTrueSet(p1,p2)));
             truebr.write("\n");
+
+            ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNumSingle);
+
+            paired.add(0, String.valueOf(haploFa.get(p1)));
+            paired.add(1, String.valueOf(haploFa.get(p2)));
+
+            ArrayList<String> random350 = Seq350();
+
+            String Reads1 = new String();
+            String Reads2 = new String();
+
+            StringBuffer sb1 = mapQ(1);
+            StringBuffer sb2 = mapQ(2);
+            ArrayList<Double> read1p = mapP(1);
+            ArrayList<Double> read2p = mapP(2);
+
+            for (int j = 0; j < random350.size(); j++) {
+                String outfile1 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R1.fq").getAbsolutePath();
+                String outfile2 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R2.fq").getAbsolutePath();
+                BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
+                BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
+                    Reads1 = random350.get(j).substring(0, 150);
+                    StringBuilder sbreads1 = new StringBuilder();
+                    for (int m = 0; m < Reads1.length(); m++) {
+                        String index = Reads1.substring(m, m + 1);
+                        String index1 = null;
+                        double ran = getRandom(0,1);
+                        if(ran < read1p.get(m)){
+                            index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
+                            sbreads1.append(index1);
+                        } else {
+                            sbreads1.append(index);
+                        }
+                    }
+                    Reads1 = sbreads1.toString();
+                    Reads2 = random350.get(j).substring(200, 350);
+                    Reads2 = new StringBuffer(Reads2).reverse().toString();
+                    StringBuilder sbreads2 = new StringBuilder();
+                    for (int l = 0; l < Reads2.length(); l++) {
+                        String index = Reads2.substring(l, l + 1);
+                        String index1 = null;
+                        double ran = getRandom(0,1);
+                        if (ran < read2p.get(l)) {
+                            index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
+                            sbreads2.append(index1);
+                        } else {
+                            sbreads2.append(index);
+                        }
+                    }
+                    Reads2 = sbreads2.toString();
+
+                    StringBuffer sb = new StringBuffer();
+                    for (int m = 0; m < Reads2.length(); m++) {
+                        String index = Reads2.substring(m, m + 1);
+                        String index1 = null;
+                        if (index.equals("A")) {
+                            index1 = "T";
+                        }
+                        if (index.equals("G")) {
+                            index1 = "C";
+                        }
+                        if (index.equals("T")) {
+                            index1 = "A";
+                        }
+                        if (index.equals("C")) {
+                            index1 = "G";
+                        }
+                        sb.append(index1);
+                    }
+                    Reads2 = sb.toString();
+
+                    bw1.write("@" + j + "\n");
+                    bw1.write(Reads1 + "\n");
+                    bw1.write("+\n");
+                    bw1.write(sb1.toString() + "\n");
+
+                    bw2.write("@" + j + "\n");
+                    bw2.write(Reads2 + "\n");
+                    bw2.write("+\n");
+                    bw2.write(sb2.toString() + "\n");
+//                }
+
+                for (int k = 0; k < se2.size(); k++) {
+                    Reads1 = se2.get(k).substring(0, 150);
+                    sbreads1 = new StringBuilder();
+                    for (int m = 0; m < Reads1.length(); m++) {
+
+                        String index = Reads1.substring(m, m + 1);
+                        String index1 = null;
+                        double ran = getRandom(0,1);
+                        if(ran < read1p.get(m)){
+                            index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
+                            sbreads1.append(index1);
+                        } else {
+                            sbreads1.append(index);
+                        }
+                    }
+                    Reads1 = sbreads1.toString();
+                    Reads2 = se2.get(k).substring(200, 350);
+                    Reads2 = new StringBuffer(Reads2).reverse().toString();
+                    sbreads2 = new StringBuilder();
+                    for (int l = 0; l < Reads2.length(); l++) {
+                        String index = Reads2.substring(l, l + 1);
+                        String index1 = null;
+                        double ran = getRandom(0,1);
+                        if (ran < read2p.get(l)) {
+                            index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
+                            sbreads2.append(index1);
+                        } else {
+                            sbreads2.append(index);
+                        }
+                    }
+                    Reads2 = sbreads2.toString();
+
+                    sb = new StringBuffer();
+                    for (int m = 0; m < Reads2.length(); m++) {
+                        String index = Reads2.substring(m, m + 1);
+                        String index1 = null;
+                        if (index.equals("A")) {
+                            index1 = "T";
+                        }
+                        if (index.equals("G")) {
+                            index1 = "C";
+                        }
+                        if (index.equals("T")) {
+                            index1 = "A";
+                        }
+                        if (index.equals("C")) {
+                            index1 = "G";
+                        }
+                        sb.append(index1);
+                    }
+                    Reads2 = sb.toString();
+
+                    bw1.write("@" + k + "_other\n");
+                    bw1.write(Reads1 + "\n");
+                    bw1.write("+\n");
+                    bw1.write(sb1.toString() + "\n");
+
+                    bw2.write("@" + k + "_other\n");
+                    bw2.write(Reads2 + "\n");
+                    bw2.write("+\n");
+                    bw2.write(sb2.toString() + "\n");
+                }
+
+                bw1.flush();
+                bw1.close();
+                bw2.flush();
+                bw2.close();
+            }
+
         }
-//        truebr.write(String.valueOf(trueS));
 
         truebr.flush();
         truebr.close();
         return indiFa;
     }
+
     public void simuReads(ArrayList<ArrayList<String>> indiFas, int i) throws IOException {
-        ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNum);
+        ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNumSingle);
 
         this.indiFa = indiFas;
 
@@ -494,6 +628,122 @@ public class Fastcall_Simulation {
         map.put(39, "H");
         map.put(40, "I");
         return map;
+    }
+
+    public static double getRandom(double min, double max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    public StringBuilder writePosRefAlt() throws IOException {
+        BufferedReader br = IOUtils.getTextGzipReader(haploFile);
+//        BufferedReader br = new BufferedReader(new FileReader("/data1/home/xinyue/simulation/haploSet.txt.gz"));
+        ArrayList<String[]> haplo = new ArrayList<>();
+        String[] h = null;
+        String str;
+        while ((str = br.readLine()) != null){
+            h = str.split("\t");
+            haplo.add(h);
+        }
+        StringBuilder indiPos = new StringBuilder();
+
+        for (int m = 0; m < 3; m++) {
+            for (int j = 0; j < haplo.size(); j++) {
+                indiPos.append(haplo.get(j)[m]+"\t");
+            }
+            indiPos.append("\n");
+        }
+        br.close();
+        return indiPos;
+    }
+
+    public StringBuilder writeTrueSet(int num1, int num2) throws IOException {
+
+        BufferedReader br = IOUtils.getTextGzipReader(haploFile);
+//        BufferedReader br = new BufferedReader(new FileReader("/data1/home/xinyue/simulation/haploSet.txt.gz"));
+        ArrayList<String[]> haplo = new ArrayList<>();
+        String[] h = null;
+        String str;
+        while ((str = br.readLine()) != null){
+            h = str.split("\t");
+            haplo.add(h);
+        }
+        StringBuilder indiMut = new StringBuilder();
+
+        for (int j = 0; j < haplo.size(); j++) {
+            indiMut.append(haplo.get(j)[3].charAt(num1));
+            indiMut.append(haplo.get(j)[3].charAt(num2));
+            indiMut.append("\t");
+        }
+        br.close();
+        return indiMut;
+    }
+
+    public ArrayList<String> Seq350(){
+        String F1 = new String();
+        String F2 = new String();
+        ArrayList<Integer> Pos = new ArrayList<>();
+        for (int i = 0; i < readsNumSingle; i++) {
+            int p = (int) getRandom(2, haploFa.get(i).length() - 351);
+            Pos.add(p);
+        }
+        ArrayList<String> random350 = new ArrayList<>();
+        for (int j = 0; j < readsNumSingle; j++) {
+            int ran = (int) Math.random();
+            String s = new String();
+            if(ran > 0.5){
+                int a =  Pos.get(j);
+                int b = Pos.get(j)+350;
+                s = (String) F1.subSequence(a, b);
+            }else{
+                int a =  Pos.get(j);
+                int b = Pos.get(j)+350;
+                s = (String) F2.subSequence(a, b);
+            }
+            random350.add(j,s);
+        }
+        return random350;
+    }
+
+    public StringBuffer mapQ(int i) throws IOException {
+        String fileQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
+        BufferedReader brQ = IOUtils.getTextReader(fileQ);
+        String str;
+        String[] h = null;
+        int count = 0;
+        while ((str = brQ.readLine()) != null){
+            h = str.split("\t");
+            Q.add(count, (int)Double.parseDouble(h[i]));
+//            read2Q.add(count, (int)Double.parseDouble(h[2]));
+            count++;
+        }
+        HashMap map = FindPos();
+        StringBuffer sb = new StringBuffer();
+        for (int m = 0; m < 150; m++) {
+            String Q = (String) map.get(this.Q.get(m));
+            sb.append(Q);
+        }
+        return sb;
+    }
+
+    public ArrayList<Double> mapP(int i) throws IOException {
+        String fileQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
+        BufferedReader brQ = IOUtils.getTextReader(fileQ);
+        String str;
+        String[] h = null;
+        int count = 0;
+        ArrayList<Integer> Qtoq = new ArrayList<>();
+        while ((str = brQ.readLine()) != null){
+            h = str.split("\t");
+            Qtoq.add(count, (int)Double.parseDouble(h[i]));
+            count++;
+        }
+        for (int j = 0; j < Qtoq.size(); j++) {
+            double x1 = Qtoq.get(j);
+            double a = 10;
+            double b1 = -(x1) / 10;
+            readp.add(Math.pow(a, b1));
+        }
+        return readp;
     }
 
 }
