@@ -23,9 +23,9 @@ public class Fastcall_Simulation {
     String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu_ref.fa.gz";
     String trueSet = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
-    ArrayList<Integer> Q = new ArrayList<>();
+
 //    ArrayList<Integer> read2Q = new ArrayList<>();
-    ArrayList<Double> readp = new ArrayList<>();
+
 //    ArrayList<Double> read2p = new ArrayList<>();
 
     String haploFile = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt.gz";
@@ -79,10 +79,9 @@ public class Fastcall_Simulation {
 
         faSeq.append(faMap.get(0).get(1));
         //循环每一个单倍型。
-        for (int m = 0; m < this.haploNum; m++) {
+//        for (int m = 0; m < this.haploNum; m++) {
             ArrayList<String> temp = new ArrayList<>();
             for (int i = 0; i < faSeq.length(); i++) {
-
                 StringBuilder mutPos = new StringBuilder();
                 char ref = faSeq.charAt(i);
                 double p = getRandom(0,1);
@@ -171,7 +170,7 @@ public class Fastcall_Simulation {
                 }
             }
             mutFasta.add(String.valueOf(sb1));
-        }
+//        }
         haploSet.flush();
         haploSet.close();
     }
@@ -197,7 +196,9 @@ public class Fastcall_Simulation {
             String Reads2 = new String();
 
             StringBuffer sb1 = mapQ(1);
+//            System.out.println(sb1.length());
             StringBuffer sb2 = mapQ(2);
+//            System.out.println(sb2.length());
             ArrayList<Double> read1p = mapP(1);
             ArrayList<Double> read2p = mapP(2);
 
@@ -268,6 +269,7 @@ public class Fastcall_Simulation {
 
             for (int k = 0; k < se2.size(); k++) {
                     Reads1 = se2.get(k).substring(0, 150);
+//                System.out.println(Reads1.length());
                     StringBuilder sbreads1 = new StringBuilder();
                     for (int m = 0; m < Reads1.length(); m++) {
                         String index = Reads1.substring(m, m + 1);
@@ -282,6 +284,7 @@ public class Fastcall_Simulation {
                     }
                     Reads1 = sbreads1.toString();
                     Reads2 = se2.get(k).substring(200, 350);
+//                System.out.println(Reads2.length());
                     Reads2 = new StringBuffer(Reads2).reverse().toString();
                     StringBuilder sbreads2 = new StringBuilder();
                     for (int l = 0; l < Reads2.length(); l++) {
@@ -417,6 +420,7 @@ public class Fastcall_Simulation {
             BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
             for (int k = 0; k < random350.get(j).size(); k++) {
                 Reads1 = random350.get(j).get(k).substring(0, 150);
+//                System.out.println(Reads1.length());
                 StringBuilder sbreads1 = new StringBuilder();
                 for (int m = 0; m < Reads1.length(); m++) {
 
@@ -432,6 +436,7 @@ public class Fastcall_Simulation {
                 }
                 Reads1 = sbreads1.toString();
                 Reads2 = random350.get(j).get(k).substring(200, 350);
+//                System.out.println(Reads2.length());
                 Reads2 = new StringBuffer(Reads2).reverse().toString();
                 StringBuilder sbreads2 = new StringBuilder();
                 for (int l = 0; l < Reads2.length(); l++) {
@@ -665,7 +670,6 @@ public class Fastcall_Simulation {
             haplo.add(h);
         }
         StringBuilder indiMut = new StringBuilder();
-
         for (int j = 0; j < haplo.size(); j++) {
             indiMut.append(haplo.get(j)[3].charAt(num1));
             indiMut.append(haplo.get(j)[3].charAt(num2));
@@ -709,6 +713,7 @@ public class Fastcall_Simulation {
     }
 
     public StringBuffer mapQ(int i) throws IOException {
+        ArrayList<Integer> Q = new ArrayList<>();
         String fileQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
         BufferedReader brQ = IOUtils.getTextReader(fileQ);
         String str;
@@ -723,8 +728,8 @@ public class Fastcall_Simulation {
         HashMap map = FindPos();
         StringBuffer sb = new StringBuffer();
         for (int m = 0; m < 150; m++) {
-            String Q = (String) map.get(this.Q.get(m));
-            sb.append(Q);
+            String s = (String) map.get(Q.get(m));
+            sb.append(s);
         }
         return sb;
     }
@@ -734,13 +739,16 @@ public class Fastcall_Simulation {
         BufferedReader brQ = IOUtils.getTextReader(fileQ);
         String str;
         String[] h = null;
-        int count = 0;
+//        int count = 0;
         ArrayList<Integer> Qtoq = new ArrayList<>();
         while ((str = brQ.readLine()) != null){
             h = str.split("\t");
-            Qtoq.add(count, (int)Double.parseDouble(h[i]));
-            count++;
+            Qtoq.add((int)Double.parseDouble(h[i]));
+
+//            count++;
         }
+//        System.out.println(Qtoq.size());
+        ArrayList<Double> readp = new ArrayList<>();
         for (int j = 0; j < Qtoq.size(); j++) {
             double x1 = Qtoq.get(j);
             double a = 10;
