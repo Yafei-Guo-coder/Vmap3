@@ -11,14 +11,16 @@ public class Fastcall_Simulation {
     StringBuilder faSeq = new StringBuilder();
     //第一步产生的突变位点单倍型fa序列。
     ArrayList<String> haploFa = new ArrayList<>();
+    ArrayList<Integer> mutPosition = new ArrayList<>();
+    ArrayList<String> mutFasta = new ArrayList<>();
     int haploNum = 3;
     int indiNum = 2;
     int readsNumSingle = 4;
     //30000000*10/300 reads number
 //    int readsNum = (int) (readsNumSingle*0.01);
-    String OtherGenome = "";
-    String refGenome = "";
-    String trueSet = "";
+    String OtherGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu_other.fa.gz";
+    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu_ref.fa.gz";
+    String trueSet = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
     ArrayList<Integer> Q = new ArrayList<>();
 //    ArrayList<Integer> read2Q = new ArrayList<>();
@@ -77,8 +79,9 @@ public class Fastcall_Simulation {
         faSeq.append(faMap.get(0).get(1));
         //循环每一个单倍型。
         for (int m = 0; m < this.haploNum; m++) {
-            int count = 0;
+            ArrayList<String> temp = new ArrayList<>();
             for (int i = 0; i < faSeq.length(); i++) {
+
                 StringBuilder mutPos = new StringBuilder();
                 char ref = faSeq.charAt(i);
                 double p = getRandom(0,1);
@@ -154,20 +157,19 @@ public class Fastcall_Simulation {
                     }
                     haploSet.write(mutPos.toString());
                     haploSet.newLine();
-                    A.add(count, String.valueOf(mutPos));
-                    StringBuilder sb = new StringBuilder();
-                    for (int j = 2; j < mutPos.toString().length(); j++) {
-                        sb.append(mutPos.toString().charAt(j));
-                    }
-                    haploFa.add(count, String.valueOf(sb));
-                    count++;
+
+                    mutPosition.add(Integer.valueOf(mutPos.toString().split("\t")[0]));
+                    temp.add(mutPos.toString().split("\t")[3]);
                 }
             }
             StringBuilder sb1 = new StringBuilder();
-            for (int j = 0; j < A.get(0).length(); j++) {
-                sb1.append(A.get(m).charAt(j));
+
+            for (int i = 0; i < temp.get(0).length(); i++) {
+                for (int j = 0; j < temp.size(); j++) {
+                    sb1.append(temp.get(j).charAt(i));
+                }
             }
-            haploFa.add(String.valueOf(sb1));
+            mutFasta.add(String.valueOf(sb1));
         }
         haploSet.flush();
         haploSet.close();
@@ -185,8 +187,8 @@ public class Fastcall_Simulation {
 
             ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNumSingle);
 
-            paired.add(0, String.valueOf(haploFa.get(p1)));
-            paired.add(1, String.valueOf(haploFa.get(p2)));
+            paired.add(0, String.valueOf(mutFasta.get(p1)));
+            paired.add(1, String.valueOf(mutFasta.get(p2)));
 
             ArrayList<String> random350 = Seq350(paired);
 
@@ -678,14 +680,12 @@ public class Fastcall_Simulation {
 
         StringBuilder fa1 = new StringBuilder();
         StringBuilder fa2 = new StringBuilder();
+        int count = 0;
         for (int i = 0; i < faSeq.length(); i++) {
-            HashSet<Integer> hs = new HashSet();
-            for (int j = 0; j < pairedFa.get(0).length(); j++) {
-                hs.add((int) pairedFa.get(0).charAt(j));
-            }
-            if(hs.contains(i)){
-                fa1.append(pairedFa.get(0).charAt(i));
-                fa2.append(pairedFa.get(1).charAt(i));
+            if(mutPosition.contains(i)){
+                fa1.append(pairedFa.get(0).charAt(count));
+                fa2.append(pairedFa.get(1).charAt(count));
+                count++;
             } else {
                 fa1.append(faSeq.charAt(i));
                 fa2.append(faSeq.charAt(i));
