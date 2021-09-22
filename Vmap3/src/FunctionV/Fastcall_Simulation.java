@@ -10,9 +10,10 @@ public class Fastcall_Simulation {
     //faSeq是参考基因组的序列。
     StringBuilder faSeq = new StringBuilder();
     //第一步产生的突变位点单倍型fa序列。
-    ArrayList<String> haploFa = new ArrayList<>();
+//    ArrayList<String> haploFa = new ArrayList<>();
     ArrayList<Integer> mutPosition = new ArrayList<>();
     ArrayList<String> mutFasta = new ArrayList<>();
+    int readsNumOther = 2;
     int haploNum = 3;
     int indiNum = 2;
     int readsNumSingle = 4;
@@ -40,19 +41,19 @@ public class Fastcall_Simulation {
         this.simuIndi();
     }
 
-    private ArrayList<String> simuReadsOtherChr(String otherGenome, int readsNum) throws IOException {
+    private ArrayList<String> simuReadsOtherChr() throws IOException {
         Fasta fa = new Fasta();
         fa.setBlocks(this.OtherGenome);
         ArrayList<ArrayList<String>> faMap = fa.getBlock();
         StringBuilder faSeq = new StringBuilder();
         faSeq.append(faMap.get(0).get(1));
         ArrayList<Integer> Pos = new ArrayList<>();
-        for (int i = 0; i < readsNum; i++) {
+        for (int i = 0; i < readsNumOther; i++) {
             int p = (int) getRandom(0, faSeq.length() - 351);
             Pos.add(p);
         }
         ArrayList<String> se = new ArrayList<>();
-        for (int j = 0; j < readsNum; j++) {
+        for (int j = 0; j < readsNumOther; j++) {
             int ran = (int) Math.random();
             if(ran > 0.5){
                 int a =  Pos.get(j);
@@ -185,7 +186,7 @@ public class Fastcall_Simulation {
             truebr.write(String.valueOf(writeTrueSet(p1,p2)));
             truebr.write("\n");
 
-            ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNumSingle);
+            ArrayList<String> se2 = this.simuReadsOtherChr();
 
             paired.add(0, String.valueOf(mutFasta.get(p1)));
             paired.add(1, String.valueOf(mutFasta.get(p2)));
@@ -200,74 +201,74 @@ public class Fastcall_Simulation {
             ArrayList<Double> read1p = mapP(1);
             ArrayList<Double> read2p = mapP(2);
 
+            String outfile1 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R1.fq").getAbsolutePath();
+            String outfile2 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R2.fq").getAbsolutePath();
+            BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
+            BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
             for (int j = 0; j < random350.size(); j++) {
-                String outfile1 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R1.fq").getAbsolutePath();
-                String outfile2 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R2.fq").getAbsolutePath();
-                BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
-                BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
-                    Reads1 = random350.get(j).substring(0, 150);
-                    StringBuilder sbreads1 = new StringBuilder();
-                    for (int m = 0; m < Reads1.length(); m++) {
-                        String index = Reads1.substring(m, m + 1);
-                        String index1 = null;
-                        double ran = getRandom(0,1);
-                        if(ran < read1p.get(m)){
-                            index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
-                            sbreads1.append(index1);
-                        } else {
-                            sbreads1.append(index);
-                        }
+                Reads1 = random350.get(j).substring(0, 150);
+                StringBuilder sbreads1 = new StringBuilder();
+                for (int m = 0; m < Reads1.length(); m++) {
+                    String index = Reads1.substring(m, m + 1);
+                    String index1 = null;
+                    double ran = getRandom(0, 1);
+                    if (ran < read1p.get(m)) {
+                        index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
+                        sbreads1.append(index1);
+                    } else {
+                        sbreads1.append(index);
                     }
-                    Reads1 = sbreads1.toString();
-                    Reads2 = random350.get(j).substring(200, 350);
-                    Reads2 = new StringBuffer(Reads2).reverse().toString();
-                    StringBuilder sbreads2 = new StringBuilder();
-                    for (int l = 0; l < Reads2.length(); l++) {
-                        String index = Reads2.substring(l, l + 1);
-                        String index1 = null;
-                        double ran = getRandom(0,1);
-                        if (ran < read2p.get(l)) {
-                            index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
-                            sbreads2.append(index1);
-                        } else {
-                            sbreads2.append(index);
-                        }
+                }
+                Reads1 = sbreads1.toString();
+                Reads2 = random350.get(j).substring(200, 350);
+                Reads2 = new StringBuffer(Reads2).reverse().toString();
+                StringBuilder sbreads2 = new StringBuilder();
+                for (int l = 0; l < Reads2.length(); l++) {
+                    String index = Reads2.substring(l, l + 1);
+                    String index1 = null;
+                    double ran = getRandom(0, 1);
+                    if (ran < read2p.get(l)) {
+                        index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
+                        sbreads2.append(index1);
+                    } else {
+                        sbreads2.append(index);
                     }
-                    Reads2 = sbreads2.toString();
+                }
+                Reads2 = sbreads2.toString();
 
-                    StringBuffer sb = new StringBuffer();
-                    for (int m = 0; m < Reads2.length(); m++) {
-                        String index = Reads2.substring(m, m + 1);
-                        String index1 = null;
-                        if (index.equals("A")) {
-                            index1 = "T";
-                        }
-                        if (index.equals("G")) {
-                            index1 = "C";
-                        }
-                        if (index.equals("T")) {
-                            index1 = "A";
-                        }
-                        if (index.equals("C")) {
-                            index1 = "G";
-                        }
-                        sb.append(index1);
+                StringBuffer sb = new StringBuffer();
+                for (int m = 0; m < Reads2.length(); m++) {
+                    String index = Reads2.substring(m, m + 1);
+                    String index1 = null;
+                    if (index.equals("A")) {
+                        index1 = "T";
                     }
-                    Reads2 = sb.toString();
-                    bw1.write("@" + j + "\n");
-                    bw1.write(Reads1 + "\n");
-                    bw1.write("+\n");
-                    bw1.write(sb1.toString() + "\n");
+                    if (index.equals("G")) {
+                        index1 = "C";
+                    }
+                    if (index.equals("T")) {
+                        index1 = "A";
+                    }
+                    if (index.equals("C")) {
+                        index1 = "G";
+                    }
+                    sb.append(index1);
+                }
+                Reads2 = sb.toString();
+                bw1.write("@" + j + "\n");
+                bw1.write(Reads1 + "\n");
+                bw1.write("+\n");
+                bw1.write(sb1.toString() + "\n");
 
-                    bw2.write("@" + j + "\n");
-                    bw2.write(Reads2 + "\n");
-                    bw2.write("+\n");
-                    bw2.write(sb2.toString() + "\n");
-//                }
+                bw2.write("@" + j + "\n");
+                bw2.write(Reads2 + "\n");
+                bw2.write("+\n");
+                bw2.write(sb2.toString() + "\n");
+            }
 
-                for (int k = 0; k < se2.size(); k++) {
+            for (int k = 0; k < se2.size(); k++) {
                     Reads1 = se2.get(k).substring(0, 150);
-                    sbreads1 = new StringBuilder();
+                    StringBuilder sbreads1 = new StringBuilder();
                     for (int m = 0; m < Reads1.length(); m++) {
                         String index = Reads1.substring(m, m + 1);
                         String index1 = null;
@@ -282,7 +283,7 @@ public class Fastcall_Simulation {
                     Reads1 = sbreads1.toString();
                     Reads2 = se2.get(k).substring(200, 350);
                     Reads2 = new StringBuffer(Reads2).reverse().toString();
-                    sbreads2 = new StringBuilder();
+                    StringBuilder sbreads2 = new StringBuilder();
                     for (int l = 0; l < Reads2.length(); l++) {
                         String index = Reads2.substring(l, l + 1);
                         String index1 = null;
@@ -295,7 +296,7 @@ public class Fastcall_Simulation {
                         }
                     }
                     Reads2 = sbreads2.toString();
-                    sb = new StringBuffer();
+                    StringBuffer sb = new StringBuffer();
                     for (int m = 0; m < Reads2.length(); m++) {
                         String index = Reads2.substring(m, m + 1);
                         String index1 = null;
@@ -325,12 +326,10 @@ public class Fastcall_Simulation {
                     bw2.write(sb2.toString() + "\n");
                 }
 
-                bw1.flush();
-                bw1.close();
-                bw2.flush();
-                bw2.close();
-            }
-
+            bw1.flush();
+            bw1.close();
+            bw2.flush();
+            bw2.close();
         }
 
         truebr.flush();
@@ -338,8 +337,8 @@ public class Fastcall_Simulation {
         return indiFa;
     }
 
-    public void simuReads(ArrayList<ArrayList<String>> indiFas, int i) throws IOException {
-        ArrayList<String> se2 = this.simuReadsOtherChr(OtherGenome, readsNumSingle);
+    public void simuReads(ArrayList<ArrayList<String>> indiFas) throws IOException {
+        ArrayList<String> se2 = this.simuReadsOtherChr();
 
         this.indiFa = indiFas;
 
@@ -347,7 +346,7 @@ public class Fastcall_Simulation {
         ArrayList<ArrayList<Integer>> startPos = new ArrayList<>();
         for (int j = 0; j < indiNum; j++) {
             ArrayList<Integer> Pos = new ArrayList<>();
-            for (i = 0; i < readsNumSingle; i++) {
+            for (int i = 0; i < readsNumSingle; i++) {
                 int p = (int) getRandom(0, indiFa.get(j).get(1).length() - 351);
                 Pos.add(p);
             }
@@ -678,20 +677,14 @@ public class Fastcall_Simulation {
 
     public ArrayList<String> Seq350(ArrayList<String> pairedFa){
 
-        StringBuilder fa1 = new StringBuilder();
-        StringBuilder fa2 = new StringBuilder();
-        int count = 0;
-        for (int i = 0; i < faSeq.length(); i++) {
-            if(mutPosition.contains(i)){
-                fa1.append(pairedFa.get(0).charAt(count));
-                fa2.append(pairedFa.get(1).charAt(count));
-                count++;
-            } else {
-                fa1.append(faSeq.charAt(i));
-                fa2.append(faSeq.charAt(i));
+        StringBuilder fa1 = faSeq;
+        StringBuilder fa2 = faSeq;
+//        int count = 0;
+        for (int i = 0; i < mutPosition.size(); i++) {
+            fa1.setCharAt(mutPosition.get(i),pairedFa.get(0).charAt(i));
+            fa2.setCharAt(mutPosition.get(i),pairedFa.get(1).charAt(i));
+//                count++;
             }
-        }
-
         ArrayList<Integer> Pos = new ArrayList<>();
         for (int i = 0; i < readsNumSingle; i++) {
             int p = (int) getRandom(2, fa1.length() - 351);
