@@ -163,11 +163,11 @@ public class Fastcall_Simulation {
                     count++;
                 }
             }
-            StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < A.size(); j++) {
-                sb.append(A.get(m).charAt(j));
+            StringBuilder sb1 = new StringBuilder();
+            for (int j = 0; j < A.get(0).length(); j++) {
+                sb1.append(A.get(m).charAt(j));
             }
-            haploFa.add(String.valueOf(sb));
+            haploFa.add(String.valueOf(sb1));
         }
         haploSet.flush();
         haploSet.close();
@@ -188,7 +188,7 @@ public class Fastcall_Simulation {
             paired.add(0, String.valueOf(haploFa.get(p1)));
             paired.add(1, String.valueOf(haploFa.get(p2)));
 
-            ArrayList<String> random350 = Seq350();
+            ArrayList<String> random350 = Seq350(paired);
 
             String Reads1 = new String();
             String Reads2 = new String();
@@ -252,7 +252,6 @@ public class Fastcall_Simulation {
                         sb.append(index1);
                     }
                     Reads2 = sb.toString();
-
                     bw1.write("@" + j + "\n");
                     bw1.write(Reads1 + "\n");
                     bw1.write("+\n");
@@ -268,7 +267,6 @@ public class Fastcall_Simulation {
                     Reads1 = se2.get(k).substring(0, 150);
                     sbreads1 = new StringBuilder();
                     for (int m = 0; m < Reads1.length(); m++) {
-
                         String index = Reads1.substring(m, m + 1);
                         String index1 = null;
                         double ran = getRandom(0,1);
@@ -295,7 +293,6 @@ public class Fastcall_Simulation {
                         }
                     }
                     Reads2 = sbreads2.toString();
-
                     sb = new StringBuffer();
                     for (int m = 0; m < Reads2.length(); m++) {
                         String index = Reads2.substring(m, m + 1);
@@ -315,7 +312,6 @@ public class Fastcall_Simulation {
                         sb.append(index1);
                     }
                     Reads2 = sb.toString();
-
                     bw1.write("@" + k + "_other\n");
                     bw1.write(Reads1 + "\n");
                     bw1.write("+\n");
@@ -678,12 +674,27 @@ public class Fastcall_Simulation {
         return indiMut;
     }
 
-    public ArrayList<String> Seq350(){
-        String F1 = new String();
-        String F2 = new String();
+    public ArrayList<String> Seq350(ArrayList<String> pairedFa){
+
+        StringBuilder fa1 = new StringBuilder();
+        StringBuilder fa2 = new StringBuilder();
+        for (int i = 0; i < faSeq.length(); i++) {
+            HashSet<Integer> hs = new HashSet();
+            for (int j = 0; j < pairedFa.get(0).length(); j++) {
+                hs.add((int) pairedFa.get(0).charAt(j));
+            }
+            if(hs.contains(i)){
+                fa1.append(pairedFa.get(0).charAt(i));
+                fa2.append(pairedFa.get(1).charAt(i));
+            } else {
+                fa1.append(faSeq.charAt(i));
+                fa2.append(faSeq.charAt(i));
+            }
+        }
+
         ArrayList<Integer> Pos = new ArrayList<>();
         for (int i = 0; i < readsNumSingle; i++) {
-            int p = (int) getRandom(2, haploFa.get(i).length() - 351);
+            int p = (int) getRandom(2, fa1.length() - 351);
             Pos.add(p);
         }
         ArrayList<String> random350 = new ArrayList<>();
@@ -693,11 +704,11 @@ public class Fastcall_Simulation {
             if(ran > 0.5){
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
-                s = (String) F1.subSequence(a, b);
+                s = (String) fa1.subSequence(a, b);
             }else{
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
-                s = (String) F2.subSequence(a, b);
+                s = (String) fa2.subSequence(a, b);
             }
             random350.add(j,s);
         }
