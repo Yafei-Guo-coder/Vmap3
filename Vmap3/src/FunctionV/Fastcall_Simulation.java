@@ -168,8 +168,9 @@ public class Fastcall_Simulation {
                 for (int j = 0; j < temp.size(); j++) {
                     sb1.append(temp.get(j).charAt(i));
                 }
+                mutFasta.add(String.valueOf(sb1));
             }
-            mutFasta.add(String.valueOf(sb1));
+
 //        }
         haploSet.flush();
         haploSet.close();
@@ -180,8 +181,8 @@ public class Fastcall_Simulation {
         truebr.write(String.valueOf(writePosRefAlt()));
         for (int i = 0; i < indiNum; i++) {
             ArrayList<String> paired = new ArrayList<>();
-            int p1 = (int) Math.random();
-            int p2 = (int) Math.random();
+            int p1 = (int) getRandom(0, haploNum);
+            int p2 = (int) getRandom(0, haploNum);
             truebr.write(String.valueOf(writeTrueSet(p1,p2)));
             truebr.write("\n");
 
@@ -243,15 +244,14 @@ public class Fastcall_Simulation {
                     String index1 = null;
                     if (index.equals("A")) {
                         index1 = "T";
-                    }
-                    if (index.equals("G")) {
+                    }else if (index.equals("G")) {
                         index1 = "C";
-                    }
-                    if (index.equals("T")) {
+                    }else if (index.equals("T")) {
                         index1 = "A";
-                    }
-                    if (index.equals("C")) {
+                    }else if (index.equals("C")) {
                         index1 = "G";
+                    } else {
+                        index1 = "N";
                     }
                     sb.append(index1);
                 }
