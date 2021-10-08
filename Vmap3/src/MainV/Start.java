@@ -9,35 +9,41 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Start {
-    public static void test() throws IOException {
-        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/1_1_5000001.ing.gz";
+    public static void main(String[] args) throws IOException {
+//        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/1_1_5000001.ing.gz";
+        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/10_100000001_105000001.ing.gz";
         String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2/chr01/ABD_0001/1_1_5000001.ing.gz";
         DataInputStream dis1 = IOUtils.getBinaryGzipReader(inputDirS);
-        IntArrayList codedAlleleInfo = null;
-        IntArrayList codedAlleleInfo2 = null;
+//        DataInputStream dis3 = IOUtils.getBinaryGzipReader(inputDirS3);
+
         String taxonName = dis1.readUTF();
         short chrom = dis1.readShort();
         int binStart = dis1.readInt();
         int binEnd = dis1.readInt();
 
-        codedAlleleInfo = new IntArrayList();
+        IntArrayList codedAlleleInfo = new IntArrayList();
         int currentRecord = 0;
-        while ((currentRecord = dis1.readInt()) != Integer.MIN_VALUE) {
+        while ((currentRecord = dis1.readInt()) == Integer.MIN_VALUE) {
+            System.out.println(Integer.toBinaryString(currentRecord));
             codedAlleleInfo.add(currentRecord);
         }
-        System.out.println(codedAlleleInfo.size());
-        DataInputStream dis2 = IOUtils.getBinaryGzipReader(outputDirS);
-        String taxonName2 = dis2.readUTF();
-        short chrom2 = dis2.readShort();
-        int binStart2 = dis2.readInt();
-        int binEnd2 = dis2.readInt();
+//        System.out.println(codedAlleleInfo.size());
 
-        codedAlleleInfo2 = new IntArrayList();
-        int currentRecord2 = 0;
-        while ((currentRecord2 = dis2.readInt()) != Integer.MIN_VALUE) {
-            System.out.println(codedAlleleInfo2.size());
-            codedAlleleInfo2.add(currentRecord2);
-        }
+    }
+}
+
+//        DataInputStream dis2 = IOUtils.getBinaryGzipReader(outputDirS);
+//        String taxonName2 = dis2.readUTF();
+//        short chrom2 = dis2.readShort();
+//        int binStart2 = dis2.readInt();
+//        int binEnd2 = dis2.readInt();
+//
+//        IntArrayList codedAlleleInfo2 = new IntArrayList();
+//        int currentRecord2 = 0;
+//        while ((currentRecord2 = dis2.readInt()) != Integer.MIN_VALUE) {
+//            System.out.println(codedAlleleInfo2.size());
+//            codedAlleleInfo2.add(currentRecord2);
+//        }
 //        System.out.println(codedAlleleInfo2.size());
 //        System.out.println(codedAlleleInfo.size());
 
@@ -48,8 +54,8 @@ public class Start {
 //            bw.write(sb.toString());
 //            bw.newLine();
 //        }
-    }
-    public static void main(String args[]) throws IOException {
+//    }
+//    public static void main(String args[]) throws IOException {
 //        String[] taxaNames = null;
 //        String inputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing";
 //        String outputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing2";
@@ -175,5 +181,5 @@ public class Start {
 //        daxing.common.VCF.splitSubgenome(fs2,"/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Chr");
 //        daxing.common.VCF.mergeVCFtoChr("/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Chr","/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Merge_Chr");
 //        }
-    }
-}
+//    }
+//}
