@@ -305,15 +305,14 @@ public class Fastcall_Simulation {
                         String index1 = null;
                         if (index.equals("A")) {
                             index1 = "T";
-                        }
-                        if (index.equals("G")) {
+                        } else if (index.equals("G")) {
                             index1 = "C";
-                        }
-                        if (index.equals("T")) {
+                        } else if (index.equals("T")) {
                             index1 = "A";
-                        }
-                        if (index.equals("C")) {
+                        } else if (index.equals("C")) {
                             index1 = "G";
+                        } else {
+                            index1 = "N";
                         }
                         sb.append(index1);
                     }
