@@ -20,7 +20,7 @@ public class Fastcall_Simulation {
     //30000000*10/300 reads number
 //    int readsNum = (int) (readsNumSingle*0.01);
     String OtherGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/chr_2.fa.gz";
-    String refGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/test.fa.gz";
+    String refGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/test_1M.fa.gz";
     String trueSet = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
 
@@ -72,7 +72,6 @@ public class Fastcall_Simulation {
     }
 
     public void haploFa() throws IOException {
-        ArrayList<String> A = new ArrayList<>();
         BufferedWriter haploSet = IOUtils.getTextGzipWriter(haploFile);
         Fasta fa = new Fasta();
         fa.setBlocks(this.refGenome);
@@ -81,97 +80,97 @@ public class Fastcall_Simulation {
         faSeq.append(faMap.get(0).get(1));
         //循环每一个单倍型。
 //        for (int m = 0; m < this.haploNum; m++) {
-            ArrayList<String> temp = new ArrayList<>();
-            for (int i = 0; i < faSeq.length(); i++) {
-                StringBuilder mutPos = new StringBuilder();
-                char ref = faSeq.charAt(i);
-                double p = getRandom(0,1);
-                if (p <= dpi) {
-                    char alt = randomAllele(faSeq.charAt(i));
-                    mutPos.append(i+"\t"+ref+"\t"+alt+"\t");
+        ArrayList<String> temp = new ArrayList<>();
+        for (int i = 0; i < faSeq.length(); i++) {
+            StringBuilder mutPos = new StringBuilder();
+            char ref = faSeq.charAt(i);
+            double p = getRandom(0,1);
+            if (p <= dpi) {
+                char alt = randomAllele(faSeq.charAt(i));
+                mutPos.append(i+"\t"+ref+"\t"+alt+"\t");
 //                    Double maf = null;
-                    double mafD = 0.7;
-                    GeometricDistribution distribution = new GeometricDistribution(mafD);
-                    int D = distribution.sample(1)[0];
-                    double maf1 = 0;
-                    double p2 = 0;
-                    if(D==0){
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0,0.1);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
-                        }
-                    }else if(D==1){
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0.1,0.2);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
-                        }
-                    }else if(D==2){
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0.2,0.3);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
-                        }
-                    }else if(D==3){
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0.3,0.4);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
-                        }
-                    }else if(D==4){
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0.4,0.5);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
-                        }
-                    }else{
-                        for (int q = 0; q < haploNum; q++) {
-                            maf1 = getRandom(0,0.1);
-                            p2 = getRandom(0,1);
-                            if (maf1 > p2) {
-                                mutPos.append(alt);
-                            }else{
-                                mutPos.append(ref);
-                            }
+                double mafD = 0.7;
+                GeometricDistribution distribution = new GeometricDistribution(mafD);
+                int D = distribution.sample(1)[0];
+                double maf1 = 0;
+                double p2 = 0;
+                if(D==0){
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0,0.1);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
                         }
                     }
-                    haploSet.write(mutPos.toString());
-                    haploSet.newLine();
-
-                    mutPosition.add(Integer.valueOf(mutPos.toString().split("\t")[0]));
-                    temp.add(mutPos.toString().split("\t")[3]);
+                }else if(D==1){
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0.1,0.2);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
+                        }
+                    }
+                }else if(D==2){
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0.2,0.3);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
+                        }
+                    }
+                }else if(D==3){
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0.3,0.4);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
+                        }
+                    }
+                }else if(D==4){
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0.4,0.5);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
+                        }
+                    }
+                }else{
+                    for (int q = 0; q < haploNum; q++) {
+                        maf1 = getRandom(0,0.1);
+                        p2 = getRandom(0,1);
+                        if (maf1 > p2) {
+                            mutPos.append(alt);
+                        }else{
+                            mutPos.append(ref);
+                        }
+                    }
                 }
+                haploSet.write(mutPos.toString());
+                haploSet.newLine();
+
+                mutPosition.add(Integer.valueOf(mutPos.toString().split("\t")[0]));
+                temp.add(mutPos.toString().split("\t")[3]);
             }
+        }
 
 
-            for (int i = 0; i < haploNum; i++) {
-                StringBuilder sb1 = new StringBuilder();
-                for (int j = 0; j < temp.size(); j++) {
-                    sb1.append(temp.get(j).charAt(i));
-                }
-                mutFasta.add(String.valueOf(sb1));
+        for (int i = 0; i < haploNum; i++) {
+            StringBuilder sb1 = new StringBuilder();
+            for (int j = 0; j < temp.size(); j++) {
+                sb1.append(temp.get(j).charAt(i));
             }
+            mutFasta.add(String.valueOf(sb1));
+        }
 
 //        }
         haploSet.flush();
@@ -270,65 +269,65 @@ public class Fastcall_Simulation {
             }
 
             for (int k = 0; k < se2.size(); k++) {
-                    Reads1 = se2.get(k).substring(0, 150);
+                Reads1 = se2.get(k).substring(0, 150);
 //                System.out.println(Reads1.length());
-                    StringBuilder sbreads1 = new StringBuilder();
-                    for (int m = 0; m < Reads1.length(); m++) {
-                        String index = Reads1.substring(m, m + 1);
-                        String index1 = null;
-                        double ran = getRandom(0,1);
-                        if(ran < read1p.get(m)){
-                            index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
-                            sbreads1.append(index1);
-                        } else {
-                            sbreads1.append(index);
-                        }
+                StringBuilder sbreads1 = new StringBuilder();
+                for (int m = 0; m < Reads1.length(); m++) {
+                    String index = Reads1.substring(m, m + 1);
+                    String index1 = null;
+                    double ran = getRandom(0,1);
+                    if(ran < read1p.get(m)){
+                        index1 = String.valueOf(randomAllele(Reads1.charAt(m)));
+                        sbreads1.append(index1);
+                    } else {
+                        sbreads1.append(index);
                     }
-                    Reads1 = sbreads1.toString();
-                    Reads2 = se2.get(k).substring(200, 350);
-//                System.out.println(Reads2.length());
-                    Reads2 = new StringBuffer(Reads2).reverse().toString();
-                    StringBuilder sbreads2 = new StringBuilder();
-                    for (int l = 0; l < Reads2.length(); l++) {
-                        String index = Reads2.substring(l, l + 1);
-                        String index1 = null;
-                        double ran = getRandom(0,1);
-                        if (ran < read2p.get(l)) {
-                            index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
-                            sbreads2.append(index1);
-                        } else {
-                            sbreads2.append(index);
-                        }
-                    }
-                    Reads2 = sbreads2.toString();
-                    StringBuffer sb = new StringBuffer();
-                    for (int m = 0; m < Reads2.length(); m++) {
-                        String index = Reads2.substring(m, m + 1);
-                        String index1 = null;
-                        if (index.equals("A")) {
-                            index1 = "T";
-                        } else if (index.equals("G")) {
-                            index1 = "C";
-                        } else if (index.equals("T")) {
-                            index1 = "A";
-                        } else if (index.equals("C")) {
-                            index1 = "G";
-                        } else {
-                            index1 = "N";
-                        }
-                        sb.append(index1);
-                    }
-                    Reads2 = sb.toString();
-                    bw1.write("@" + k + "_other\n");
-                    bw1.write(Reads1 + "\n");
-                    bw1.write("+\n");
-                    bw1.write(sb1.toString() + "\n");
-
-                    bw2.write("@" + k + "_other\n");
-                    bw2.write(Reads2 + "\n");
-                    bw2.write("+\n");
-                    bw2.write(sb2.toString() + "\n");
                 }
+                Reads1 = sbreads1.toString();
+                Reads2 = se2.get(k).substring(200, 350);
+//                System.out.println(Reads2.length());
+                Reads2 = new StringBuffer(Reads2).reverse().toString();
+                StringBuilder sbreads2 = new StringBuilder();
+                for (int l = 0; l < Reads2.length(); l++) {
+                    String index = Reads2.substring(l, l + 1);
+                    String index1 = null;
+                    double ran = getRandom(0,1);
+                    if (ran < read2p.get(l)) {
+                        index1 = String.valueOf(randomAllele(Reads2.charAt(l)));
+                        sbreads2.append(index1);
+                    } else {
+                        sbreads2.append(index);
+                    }
+                }
+                Reads2 = sbreads2.toString();
+                StringBuffer sb = new StringBuffer();
+                for (int m = 0; m < Reads2.length(); m++) {
+                    String index = Reads2.substring(m, m + 1);
+                    String index1 = null;
+                    if (index.equals("A")) {
+                        index1 = "T";
+                    } else if (index.equals("G")) {
+                        index1 = "C";
+                    } else if (index.equals("T")) {
+                        index1 = "A";
+                    } else if (index.equals("C")) {
+                        index1 = "G";
+                    } else {
+                        index1 = "N";
+                    }
+                    sb.append(index1);
+                }
+                Reads2 = sb.toString();
+                bw1.write("@" + k + "_other\n");
+                bw1.write(Reads1 + "\n");
+                bw1.write("+\n");
+                bw1.write(sb1.toString() + "\n");
+
+                bw2.write("@" + k + "_other\n");
+                bw2.write(Reads2 + "\n");
+                bw2.write("+\n");
+                bw2.write(sb2.toString() + "\n");
+            }
 
             bw1.flush();
             bw1.close();
@@ -550,8 +549,8 @@ public class Fastcall_Simulation {
             bw1.close();
             bw2.flush();
             bw2.close();
-            }
         }
+    }
 
     public static char randomAllele(char alle){
         char alt = 0;
@@ -689,7 +688,7 @@ public class Fastcall_Simulation {
             fa1.setCharAt(mutPosition.get(i),pairedFa.get(0).charAt(i));
             fa2.setCharAt(mutPosition.get(i),pairedFa.get(1).charAt(i));
 //                count++;
-            }
+        }
         ArrayList<Integer> Pos = new ArrayList<>();
         for (int i = 0; i < readsNumSingle; i++) {
             int p = (int) getRandom(2, fa1.length() - 351);
