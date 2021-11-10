@@ -13,22 +13,23 @@ public class Fastcall_Simulation {
 //    ArrayList<String> haploFa = new ArrayList<>();
     ArrayList<Integer> mutPosition = new ArrayList<>();
     ArrayList<String> mutFasta = new ArrayList<>();
-    int readsNumOther = 2;
-    int haploNum = 3;
-    int indiNum = 2;
-    int readsNumSingle = 4;
+    int readsNumOther = 2000;
+    int haploNum = 20;
+    int indiNum = 3;
+    int readsNumSingle = 20000;
     //30000000*10/300 reads number
 //    int readsNum = (int) (readsNumSingle*0.01);
-    String OtherGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu_other.fa.gz";
-    String refGenome = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/chr1_simu_ref.fa.gz";
-    String trueSet = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/trueSet.txt.gz";
+    String OtherGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/chr_2.fa.gz";
+    String refGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/test.fa.gz";
+    String trueSet = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
+
 
 //    ArrayList<Integer> read2Q = new ArrayList<>();
 
 //    ArrayList<Double> read2p = new ArrayList<>();
 
-    String haploFile = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/haploSet.txt.gz";
+    String haploFile = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/haploSet.txt.gz";
     ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
 
     public static void main(String[] args) throws IOException {
@@ -162,9 +163,10 @@ public class Fastcall_Simulation {
                     temp.add(mutPos.toString().split("\t")[3]);
                 }
             }
-            StringBuilder sb1 = new StringBuilder();
 
-            for (int i = 0; i < temp.get(0).length(); i++) {
+
+            for (int i = 0; i < haploNum; i++) {
+                StringBuilder sb1 = new StringBuilder();
                 for (int j = 0; j < temp.size(); j++) {
                     sb1.append(temp.get(j).charAt(i));
                 }
@@ -203,8 +205,8 @@ public class Fastcall_Simulation {
             ArrayList<Double> read1p = mapP(1);
             ArrayList<Double> read2p = mapP(2);
 
-            String outfile1 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R1.fq").getAbsolutePath();
-            String outfile2 = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/sample"+i+"_R2.fq").getAbsolutePath();
+            String outfile1 = new File("/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/sample"+i+"_R1.fq").getAbsolutePath();
+            String outfile2 = new File("/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/sample"+i+"_R2.fq").getAbsolutePath();
             BufferedWriter bw1 = IOUtils.getTextWriter(outfile1);
             BufferedWriter bw2 = IOUtils.getTextWriter(outfile2);
             for (int j = 0; j < random350.size(); j++) {
@@ -377,7 +379,7 @@ public class Fastcall_Simulation {
         String Reads2 = new String();
         ArrayList<Integer> read1Q = new ArrayList<>();
         ArrayList<Integer> read2Q = new ArrayList<>();
-        String readQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
+        String readQ = new File("/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
         BufferedReader brQ = IOUtils.getTextReader(readQ);
         String str;
         String[] h = null;
@@ -682,7 +684,7 @@ public class Fastcall_Simulation {
 
         StringBuilder fa1 = faSeq;
         StringBuilder fa2 = faSeq;
-//        int count = 0;
+//        int count = 0;7
         for (int i = 0; i < mutPosition.size(); i++) {
             fa1.setCharAt(mutPosition.get(i),pairedFa.get(0).charAt(i));
             fa2.setCharAt(mutPosition.get(i),pairedFa.get(1).charAt(i));
@@ -713,7 +715,7 @@ public class Fastcall_Simulation {
 
     public StringBuffer mapQ(int i) throws IOException {
         ArrayList<Integer> Q = new ArrayList<>();
-        String fileQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
+        String fileQ = new File("/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
         BufferedReader brQ = IOUtils.getTextReader(fileQ);
         String str;
         String[] h = null;
@@ -734,7 +736,7 @@ public class Fastcall_Simulation {
     }
 
     public ArrayList<Double> mapP(int i) throws IOException {
-        String fileQ = new File("/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
+        String fileQ = new File("/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/reads.Q.txt").getAbsolutePath();
         BufferedReader brQ = IOUtils.getTextReader(fileQ);
         String str;
         String[] h = null;
