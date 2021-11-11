@@ -23,7 +23,7 @@ public class Fastcall_Simulation {
     String refGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/test_1M.fa.gz";
     String trueSet = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
-//    ArrayList<Integer> read2Q = new ArrayList<>();
+    //    ArrayList<Integer> read2Q = new ArrayList<>();
 //    ArrayList<Double> read2p = new ArrayList<>();
     String haploFile = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/haploSet.txt.gz";
     ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
