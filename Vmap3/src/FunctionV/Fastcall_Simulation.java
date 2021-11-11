@@ -23,12 +23,8 @@ public class Fastcall_Simulation {
     String refGenome = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/test_1M.fa.gz";
     String trueSet = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/trueSet.txt.gz";
     Double dpi = 0.001;
-
-
 //    ArrayList<Integer> read2Q = new ArrayList<>();
-
 //    ArrayList<Double> read2p = new ArrayList<>();
-
     String haploFile = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/simulation/haploSet.txt.gz";
     ArrayList<ArrayList<String>> indiFa = new ArrayList<>();
 
@@ -681,12 +677,13 @@ public class Fastcall_Simulation {
 
     public ArrayList<String> Seq350(ArrayList<String> pairedFa){
 
-        StringBuilder fa1 = faSeq;
-        StringBuilder fa2 = faSeq;
+        StringBuilder fa1 = new StringBuilder(faSeq);
+        StringBuilder fa2 = new StringBuilder(faSeq);
 //        int count = 0;7
         for (int i = 0; i < mutPosition.size(); i++) {
-            fa1.setCharAt(mutPosition.get(i),pairedFa.get(0).charAt(i));
             fa2.setCharAt(mutPosition.get(i),pairedFa.get(1).charAt(i));
+            fa1.setCharAt(mutPosition.get(i),pairedFa.get(0).charAt(i));
+
 //                count++;
         }
         ArrayList<Integer> Pos = new ArrayList<>();
@@ -696,8 +693,8 @@ public class Fastcall_Simulation {
         }
         ArrayList<String> random350 = new ArrayList<>();
         for (int j = 0; j < readsNumSingle; j++) {
-            int ran = (int) Math.random();
-            String s = new String();
+            double ran =  Math.random();
+            String s;
             if(ran > 0.5){
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
