@@ -21,27 +21,28 @@ public class CountSite {
      * @param infileDirS
      */
     public static void countSitesinFastCallformat_fromTxt(String infileDirS, String outfile) {
-
         List<File> fsList = AoFile.getFileListInDir(infileDirS);
         BufferedWriter bw = null;
         bw = IOUtils.getTextWriter(outfile);
         try {
-            bw.write("Chr\tN_RawSNPs\tN_BiallelicSNPs\tN_TriallelicSNPs\tIndels\tInsertions\tDeletions\n");
+            bw.write("Chr\tN_BiSNPs\tN_BiD\tN_BiI\tTiSNP\tTiD\tTiI\tTiDI\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        System.out.println("Chr\tN_RawSNPs\tN_BiallelicSNPs\tN_TriallelicSNPs\tIndels\tInsertions\tDeletions");
+//        System.out.println("Chr\tN_BiSNPs\tN_BiD\tN_BiI\tTiSNP\tTiD\tTiI\tTiDI");
         for (File f : fsList){
             String infileS = f.getAbsolutePath();
             BufferedReader br = AoFile.readFile(infileS);
             String chr = f.getName().substring(3, 6); //提取染色体号 001
             int chrint = Integer.parseInt(chr); //将染色体号转化为数字
-            int cntSNP = 0;
-            int cntBi = 0;
-            int cntTri = 0;
-            int cntIndel = 0;
-            int cntI = 0;
-            int cntD = 0;
+            int cntBiSNP = 0;
+            int cntBiD = 0;
+            int cntBiI = 0;
+
+            int cntTiSNP = 0;
+            int cntTiD = 0;
+            int cntTiI = 0;
+            int cntTiDI =0;
             String temp = null;
             try {
                 String header = br.readLine();
@@ -59,42 +60,34 @@ public class CountSite {
                 } //是否含有D I
                 String alt = PStringUtils.fastSplit(temp).get(4);
                 /**
+                 * 不含逗号，即有1个alt.
+                 * case 1: A/T/G/C
+                 * case 2: D
+                 * case 3: I
                  * 含有逗号，即有2个alt.
                  * case 1: A,T
-                 * case 2: D,I
-                 * case 3: D,G
-                 * case 4: I,T
+                 * case 2: D,G
+                 * case 3: I,T
+                 * case 4: D,I
                  */
-                if (!(alt.length() == 1)) { //2个alt的情况;若该位点含有D或I ，那么就属于Indel，如果没有D 或者I，那么就属于SNP
-                    boolean ifD = false;
+                if (!(alt.length() == 1)) { //2个alt的情况
+                    //boolean ifD = false;
                     if (!alt.contains("D") && (!alt.contains("I"))) {
-                        cntTri++;
-                        cntSNP++;
+                        cntTiSNP++;
+                    } else if(alt.contains("D") && alt.contains("I")) {
+                        cntTiDI++;
+                    } else if (alt.contains("I")) {
+                        cntTiI++;
+                    } else{
+                        cntTiD++;
                     }
-                    if (alt.contains("D")) {
-                        cntD++;
-                        cntIndel++;
-                        ifD = true;
-                    }
-                    if (alt.contains("I")) {
-                        cntI++;
-                        if (ifD == false) { //针对 case 2的情况，即含有D又含有I， 这时在上面的D中已经加过 cntIndel了，所以不用再加了
-                            cntIndel++;
-                        }
-                    }
-
-                } else if (alt.length() == 1) { //1个alt的情况;
+                } else { //1个alt的情况;
                     if (!alt.equals("D") && (!alt.equals("I"))) {
-                        cntBi++;
-                        cntSNP++;
-                    }
-                    if (alt.equals("D")) {
-                        cntD++;
-                        cntIndel++;
-                    }
-                    if (alt.equals("I")) {
-                        cntI++;
-                        cntIndel++;
+                        cntBiSNP++;
+                    } else if (alt.equals("D")) {
+                        cntBiD++;
+                    } else {
+                        cntBiI++;
                     }
                 }
             }
@@ -104,12 +97,11 @@ public class CountSite {
                 e.printStackTrace();
             }
             try {
-                bw.write(String.valueOf(chrint) + "\t" + String.valueOf(cntSNP) + "\t" + String.valueOf(cntBi) + "\t" + String.valueOf(cntTri) + "\t" + String.valueOf(cntIndel) + "\t" + String.valueOf(cntI) + "\t" + String.valueOf(cntD)+"\n");
+                bw.write(String.valueOf(chrint) + "\t" + String.valueOf(cntBiSNP) + "\t" + String.valueOf(cntBiD) + "\t" + String.valueOf(cntBiI) + "\t" + String.valueOf(cntTiSNP) + "\t" + String.valueOf(cntTiD) + "\t" + String.valueOf(cntTiI)+"\t" + String.valueOf(cntTiDI)+"\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//            System.out.println(String.valueOf(chrint) + "\t" + String.valueOf(cntSNP) + "\t" + String.valueOf(cntBi) + "\t" + String.valueOf(cntTri) + "\t" + String.valueOf(cntIndel) + "\t" + String.valueOf(cntI) + "\t" + String.valueOf(cntD));
-
+//            System.out.println(String.valueOf(chrint) + "\t" + String.valueOf(cntTiDI) + "\t" + String.valueOf(cntBiD) + "\t" + String.valueOf() + "\t" + String.valueOf(cntTiSNP) + "\t" + String.valueOf(cntTiI) + "\t" + String.valueOf(cntTiD));
         }
         try {
             bw.close();

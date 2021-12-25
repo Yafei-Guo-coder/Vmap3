@@ -15,7 +15,7 @@ public class Fastcall_Simulation {
     ArrayList<String> mutFasta = new ArrayList<>();
     int readsNumOther = 2000;
     int haploNum = 20;
-    int indiNum = 3;
+    int indiNum = 10;
     int readsNumSingle = 20000;
     //30000000*10/300 reads number
 //    int readsNum = (int) (readsNumSingle*0.01);
@@ -44,6 +44,10 @@ public class Fastcall_Simulation {
         ArrayList<ArrayList<String>> faMap = fa.getBlock();
         StringBuilder faSeq = new StringBuilder();
         faSeq.append(faMap.get(0).get(1));
+
+        StringBuilder fa1 = new StringBuilder(faSeq);
+        StringBuilder fa2 = new StringBuilder(faSeq);
+
         ArrayList<Integer> Pos = new ArrayList<>();
         for (int i = 0; i < readsNumOther; i++) {
             int p = (int) getRandom(0, faSeq.length() - 351);
@@ -55,12 +59,12 @@ public class Fastcall_Simulation {
             if(ran > 0.5){
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
-                String s = (String) faSeq.subSequence(a, b);
+                String s = (String) fa1.subSequence(a, b);
                 se.add(j,s);
             }else{
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
-                String s = (String) faSeq.subSequence(a, b);
+                String s = (String) fa2.subSequence(a, b);
                 se.add(j,s);
             }
         }

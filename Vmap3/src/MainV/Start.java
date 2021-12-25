@@ -1,6 +1,7 @@
 package MainV;
 
 
+import FunctionV.CountSite;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import pgl.infra.utils.IOUtils;
 
@@ -50,6 +51,7 @@ public class Start {
 //        }
     }
     public static void main(String args[]) throws IOException {
+        CountSite.countSitesinFastCallformat_fromTxt(args[0],args[1]);
 //        String[] taxaNames = null;
 //        String inputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing";
 //        String outputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing2";
