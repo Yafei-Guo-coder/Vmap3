@@ -5,40 +5,52 @@ import FunctionV.CountSite;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import pgl.infra.utils.IOUtils;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static FunctionV.CountSite.splitVcf;
+
 public class Start {
-    public static void test() throws IOException {
-        String inputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing/chr01/ABD_0001/1_1_5000001.ing.gz";
-        String outputDirS = "/Users/guoyafei/Documents/01_个人项目/04_VmapIII/09_Fastcall2/ing2/chr01/ABD_0001/1_1_5000001.ing.gz";
-        DataInputStream dis1 = IOUtils.getBinaryGzipReader(inputDirS);
-        IntArrayList codedAlleleInfo = null;
-        IntArrayList codedAlleleInfo2 = null;
-        String taxonName = dis1.readUTF();
-        short chrom = dis1.readShort();
-        int binStart = dis1.readInt();
-        int binEnd = dis1.readInt();
+//    public static void test() throws IOException {
+    public static void main(String args[]) throws IOException {
 
-        codedAlleleInfo = new IntArrayList();
-        int currentRecord = 0;
-        while ((currentRecord = dis1.readInt()) != Integer.MIN_VALUE) {
-            codedAlleleInfo.add(currentRecord);
-        }
-        System.out.println(codedAlleleInfo.size());
-        DataInputStream dis2 = IOUtils.getBinaryGzipReader(outputDirS);
-        String taxonName2 = dis2.readUTF();
-        short chrom2 = dis2.readShort();
-        int binStart2 = dis2.readInt();
-        int binEnd2 = dis2.readInt();
+//        String a = "A";
+//        System.out.println(a.length());
+        splitVcf(args[0]);
+        //splitVcf("/data2/yafei/004_Vmap3/VCF/Raw_VCF/AA_vcf/chr019");
+//        String inputDirS = "/Users/guoyafei/Documents/02_VmapIII/03_Fastcall2/测试数据/fastCall/ing/D_0026/43_1_452529.ing.gz";
+////        String inputDirS = input;
+////        String outputDirS = "/Users/guoyafei/Desktop/Out/43_1_452529.ing.gz";
+//        DataInputStream dis1 = IOUtils.getBinaryGzipReader(inputDirS);
+//        IntArrayList codedAlleleInfo = null;
+//        IntArrayList codedAlleleInfo2 = null;
+//        String taxonName = dis1.readUTF();
+//        short chrom = dis1.readShort();
+//        int binStart = dis1.readInt();
+//        int binEnd = dis1.readInt();
+//
+//        codedAlleleInfo = new IntArrayList();
+//        int currentRecord = 0;
+//        while ((currentRecord = dis1.readInt()) != Integer.MIN_VALUE) {
+//            int v = currentRecord >> 9;
+//            codedAlleleInfo.add(v);
+//            System.out.println(v+"\n");
+//            break;
+//        }
+//        System.out.println(codedAlleleInfo.size());
+//        DataInputStream dis2 = IOUtils.getBinaryGzipReader(outputDirS);
+//        String taxonName2 = dis2.readUTF();
+//        short chrom2 = dis2.readShort();
+//        int binStart2 = dis2.readInt();
+//        int binEnd2 = dis2.readInt();
 
-        codedAlleleInfo2 = new IntArrayList();
-        int currentRecord2 = 0;
-        while ((currentRecord2 = dis2.readInt()) != Integer.MIN_VALUE) {
-            System.out.println(codedAlleleInfo2.size());
-            codedAlleleInfo2.add(currentRecord2);
-        }
+//        codedAlleleInfo2 = new IntArrayList();
+//        int currentRecord2 = 0;
+//        while ((currentRecord2 = dis2.readInt()) != Integer.MIN_VALUE) {
+//            System.out.println(codedAlleleInfo2.size());
+//            codedAlleleInfo2.add(currentRecord2);
+//        }
 //        System.out.println(codedAlleleInfo2.size());
 //        System.out.println(codedAlleleInfo.size());
 
@@ -50,8 +62,15 @@ public class Start {
 //            bw.newLine();
 //        }
     }
-    public static void main(String args[]) throws IOException {
-        CountSite.countSitesinFastCallformat_fromTxt(args[0],args[1]);
+//    public static void main(String args[]) throws IOException {
+//        List<File> Dirlist = IOUtils.getFileListInDir("/Users/guoyafei/Desktop/ing");
+//
+////        for (int j = 0; j < Dirlist.size(); j++) {
+//            List<File> Dir2list = IOUtils.getFileListInDir(String.valueOf(Dirlist.get(25)));
+//                test(Dir2list.get(0).getAbsolutePath());
+//            getHaplo(Dir2list.get(1).getAbsolutePath(),Dirlist.get(j).getAbsolutePath().replace("vcf","txt"));
+//        }
+//        CountSite.countSitesinFastCallformat_fromTxt(args[0],args[1]);
 //        String[] taxaNames = null;
 //        String inputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing";
 //        String outputDirS = "/data2/xinyue/Yafei/vmap3_E1/AABB_middle/ing2";
@@ -138,7 +157,7 @@ public class Start {
 ////
 //            }
 //        splitVcf(args[0]);
-            //splitVcf("/data2/yafei/004_Vmap3/VCF/Raw_VCF/AA_vcf/chr019");
+//            splitVcf("/data2/yafei/004_Vmap3/VCF/Raw_VCF/AA_vcf/chr019");
 //        countSitesinFastCallformat_fromTxt(args[0],args[1]);
             // System.out.println(Runtime.getRuntime().availableProcessors());
 //        countSitesinFastCallformat_fromTxt("/Users/guoyafei/Documents/01_个人项目/05_FuGWAS/06_单倍型分析0419/test","/Users/guoyafei/Documents/01_个人项目/05_FuGWAS/06_单倍型分析0419/01_VCF/1.txt");
@@ -177,5 +196,5 @@ public class Start {
 //        daxing.common.VCF.splitSubgenome(fs2,"/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Chr");
 //        daxing.common.VCF.mergeVCFtoChr("/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Chr","/data2/yafei/003_Project3/Vmap1.1/Out/VCF/VmapE6/Merge_Chr");
 //        }
-    }
+//    }
 }

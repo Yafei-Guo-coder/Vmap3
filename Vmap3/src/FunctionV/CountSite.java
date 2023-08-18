@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CountSite {
-
     /**
      * 对VCF文件进行变异统计.
      *
@@ -121,9 +120,9 @@ public class CountSite {
             String infileS = f.getAbsolutePath();
             BufferedReader br = AoFile.readFile(infileS);
 
-            //String outfileID = infileS+".N.gz";
+            String outfileID = infileS+".N.gz";
             String outfileSNP = infileS+".biallel.noN.snp.gz";
-            //bwID = IOUtils.getTextGzipWriter(outfileID);
+            BufferedWriter bwID = IOUtils.getTextGzipWriter(outfileID);
             bwSNP = IOUtils.getTextGzipWriter(outfileSNP);
             while (true) {
                 try {
@@ -143,13 +142,13 @@ public class CountSite {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } //else {
-//                    try {
-//                        bwID.write(temp+"\n");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
+                } else {
+                    try {
+                        bwID.write(temp+"\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             try {
                 br.close();
