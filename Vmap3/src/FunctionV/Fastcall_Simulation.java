@@ -182,8 +182,16 @@ public class Fastcall_Simulation {
         truebr.write(String.valueOf(writePosRefAlt()));
         for (int i = 0; i < indiNum; i++) {
             ArrayList<String> paired = new ArrayList<>();
-            int p1 = (int) getRandom(0, haploNum);
-            int p2 = (int) getRandom(0, haploNum);
+            int Hat = (int) Math.random();
+            int p1;
+            int p2;
+            if(Hat < 0.05){
+                p1 = (int) getRandom(0, haploNum);
+                p2 = (int) getRandom(0, haploNum);
+            }else{
+                p1 = (int) getRandom(0, haploNum);
+                p2 = p1;
+            }
             truebr.write(String.valueOf(writeTrueSet(p1,p2)));
             truebr.write("\n");
 
