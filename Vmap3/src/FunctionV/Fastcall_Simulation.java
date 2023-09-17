@@ -55,7 +55,7 @@ public class Fastcall_Simulation {
         }
         ArrayList<String> se = new ArrayList<>();
         for (int j = 0; j < readsNumOther; j++) {
-            int ran = (int) Math.random();
+            Double ran =  Math.random();
             if(ran > 0.5){
                 int a =  Pos.get(j);
                 int b = Pos.get(j)+350;
@@ -182,7 +182,7 @@ public class Fastcall_Simulation {
         truebr.write(String.valueOf(writePosRefAlt()));
         for (int i = 0; i < indiNum; i++) {
             ArrayList<String> paired = new ArrayList<>();
-            int Het = (int) Math.random();
+            Double Het = Math.random();
             int p1;
             int p2;
             if(Het < 0.05){
@@ -367,7 +367,7 @@ public class Fastcall_Simulation {
         for (int m = 0; m < indiNum; m++) {
             ArrayList<String> se = new ArrayList<>();
             for (int j = 0; j < readsNumSingle; j++) {
-                int ran = (int) Math.random();
+                Double ran = Math.random();
                 if(ran > 0.5){
                     int a =  startPos.get(m).get(j);
                     int b = startPos.get(m).get(j)+350;
